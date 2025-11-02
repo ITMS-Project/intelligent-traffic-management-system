@@ -6,3 +6,7 @@ Research Component for University Grading
 ==========================================
 This module demonstrates fuzzy inference systems for traffic signal optimization.
 Uses scikit-fuzzy for fuzzy set operations and rule-based inference.
+"""
+
+import numpy as np
+
