@@ -7,3 +7,6 @@ from typing import Optional
 from fastapi import APIRouter, Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
+
+from app.fuzzy.traffic_controller import (
+    FuzzyTrafficController,
