@@ -10,3 +10,6 @@ from pydantic import BaseModel
 
 from app.fuzzy.traffic_controller import (
     FuzzyTrafficController,
+    TrafficSignal,
+    get_signal,
+    FUZZY_AVAILABLE,
