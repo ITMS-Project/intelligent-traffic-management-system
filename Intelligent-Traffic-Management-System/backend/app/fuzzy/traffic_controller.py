@@ -10,3 +10,7 @@ Uses scikit-fuzzy for fuzzy set operations and rule-based inference.
 
 import numpy as np
 
+try:
+    import skfuzzy as fuzz
+    from skfuzzy import control as ctrl
+    FUZZY_AVAILABLE = True
