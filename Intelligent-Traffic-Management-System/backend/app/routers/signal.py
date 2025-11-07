@@ -13,3 +13,6 @@ from app.fuzzy.traffic_controller import (
     TrafficSignal,
     get_signal,
     FUZZY_AVAILABLE,
+)
+
+router = APIRouter(prefix="/signal", tags=["Signal Control"])
