@@ -14,3 +14,7 @@ try:
     import skfuzzy as fuzz
     from skfuzzy import control as ctrl
     FUZZY_AVAILABLE = True
+except ImportError:
+    FUZZY_AVAILABLE = False
+    print("⚠️ scikit-fuzzy not installed. Run: pip install scikit-fuzzy")
+
