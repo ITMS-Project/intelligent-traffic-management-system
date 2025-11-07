@@ -18,3 +18,7 @@ except ImportError:
     FUZZY_AVAILABLE = False
     print("⚠️ scikit-fuzzy not installed. Run: pip install scikit-fuzzy")
 
+
+class FuzzyTrafficController:
+    """
+    Fuzzy logic controller for adaptive traffic signal timing.
