@@ -22,3 +22,7 @@ except ImportError:
 class FuzzyTrafficController:
     """
     Fuzzy logic controller for adaptive traffic signal timing.
+    
+    Input: Vehicle count at intersection
+    Output: Green light duration in seconds
+    
