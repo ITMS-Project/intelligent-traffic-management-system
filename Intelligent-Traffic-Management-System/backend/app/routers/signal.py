@@ -22,3 +22,6 @@ router = APIRouter(prefix="/signal", tags=["Signal Control"])
 # Pydantic Models
 # =============================================================================
 
+class SignalUpdateRequest(BaseModel):
+    """Request model for updating signal timing."""
+    vehicle_count: int
