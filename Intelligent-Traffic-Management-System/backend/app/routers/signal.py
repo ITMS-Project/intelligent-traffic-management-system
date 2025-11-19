@@ -25,3 +25,6 @@ router = APIRouter(prefix="/signal", tags=["Signal Control"])
 class SignalUpdateRequest(BaseModel):
     """Request model for updating signal timing."""
     vehicle_count: int
+    signal_id: Optional[str] = "main"
+
+
