@@ -38,3 +38,7 @@ class FuzzyTrafficController:
         
         Args:
             min_green: Minimum green light duration (seconds)
+            max_green: Maximum green light duration (seconds)
+        """
+        self.min_green = min_green
+        self.max_green = max_green
