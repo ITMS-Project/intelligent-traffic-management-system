@@ -28,3 +28,6 @@ class SignalUpdateRequest(BaseModel):
     signal_id: Optional[str] = "main"
 
 
+class SignalStateRequest(BaseModel):
+    """Request model for setting signal state."""
+    state: str  # 'red', 'yellow', 'green'
