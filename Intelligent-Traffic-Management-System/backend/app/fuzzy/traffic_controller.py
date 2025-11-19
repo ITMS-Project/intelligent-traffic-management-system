@@ -42,3 +42,7 @@ class FuzzyTrafficController:
         """
         self.min_green = min_green
         self.max_green = max_green
+        self.simulation = None
+        
+        if FUZZY_AVAILABLE:
+            self._setup_fuzzy_system()
