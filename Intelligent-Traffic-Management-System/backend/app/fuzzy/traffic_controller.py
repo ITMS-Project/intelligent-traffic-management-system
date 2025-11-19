@@ -34,3 +34,7 @@ class FuzzyTrafficController:
     
     def __init__(self, min_green: int = 10, max_green: int = 60):
         """
+        Initialize the fuzzy controller.
+        
+        Args:
+            min_green: Minimum green light duration (seconds)
