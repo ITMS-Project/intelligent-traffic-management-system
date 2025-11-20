@@ -31,3 +31,6 @@ class SignalUpdateRequest(BaseModel):
 class SignalStateRequest(BaseModel):
     """Request model for setting signal state."""
     state: str  # 'red', 'yellow', 'green'
+    duration: Optional[int] = None
+
+
