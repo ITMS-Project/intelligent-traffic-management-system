@@ -54,3 +54,7 @@ class FuzzyTrafficController:
         # Define fuzzy variables
         
         # Input: Vehicle count (0 to 30)
+        self.vehicle_count = ctrl.Antecedent(np.arange(0, 31, 1), 'vehicle_count')
+        
+        # Output: Green light duration (10 to 60 seconds)
+        self.green_duration = ctrl.Consequent(np.arange(self.min_green, self.max_green + 1, 1), 'green_duration')
