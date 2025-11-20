@@ -50,3 +50,7 @@ class FuzzyTrafficController:
             print("⚠️ Running in fallback mode (linear interpolation)")
     
     def _setup_fuzzy_system(self):
+        """Set up the fuzzy inference system."""
+        # Define fuzzy variables
+        
+        # Input: Vehicle count (0 to 30)
