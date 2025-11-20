@@ -46,3 +46,7 @@ class FuzzyTrafficController:
         
         if FUZZY_AVAILABLE:
             self._setup_fuzzy_system()
+        else:
+            print("⚠️ Running in fallback mode (linear interpolation)")
+    
+    def _setup_fuzzy_system(self):
