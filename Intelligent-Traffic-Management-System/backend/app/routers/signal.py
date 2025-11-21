@@ -34,3 +34,6 @@ class SignalStateRequest(BaseModel):
     duration: Optional[int] = None
 
 
+class SignalResponse(BaseModel):
+    """Response model for signal status."""
+    signal_id: str
