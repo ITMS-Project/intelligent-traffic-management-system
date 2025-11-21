@@ -58,3 +58,7 @@ class FuzzyTrafficController:
         
         # Output: Green light duration (10 to 60 seconds)
         self.green_duration = ctrl.Consequent(np.arange(self.min_green, self.max_green + 1, 1), 'green_duration')
+        
+        # Define membership functions for vehicle count
+        self.vehicle_count['low'] = fuzz.trimf(self.vehicle_count.universe, [0, 0, 8])
+        self.vehicle_count['medium'] = fuzz.trimf(self.vehicle_count.universe, [5, 12, 20])
