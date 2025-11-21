@@ -37,3 +37,6 @@ class SignalStateRequest(BaseModel):
 class SignalResponse(BaseModel):
     """Response model for signal status."""
     signal_id: str
+    state: str
+    remaining_time: int
+    green_duration: int
