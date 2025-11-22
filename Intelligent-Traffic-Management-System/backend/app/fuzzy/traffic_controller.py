@@ -74,3 +74,7 @@ class FuzzyTrafficController:
         
         # Define fuzzy rules
         rule1 = ctrl.Rule(self.vehicle_count['low'], self.green_duration['short'])
+        rule2 = ctrl.Rule(self.vehicle_count['medium'], self.green_duration['medium'])
+        rule3 = ctrl.Rule(self.vehicle_count['high'], self.green_duration['long'])
+        
+        # Create control system
