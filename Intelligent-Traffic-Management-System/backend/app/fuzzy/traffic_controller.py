@@ -66,3 +66,7 @@ class FuzzyTrafficController:
         
         # Define membership functions for green duration
         self.green_duration['short'] = fuzz.trimf(self.green_duration.universe, 
+                                                   [self.min_green, self.min_green, 25])
+        self.green_duration['medium'] = fuzz.trimf(self.green_duration.universe, 
+                                                    [20, 35, 50])
+        self.green_duration['long'] = fuzz.trimf(self.green_duration.universe, 
