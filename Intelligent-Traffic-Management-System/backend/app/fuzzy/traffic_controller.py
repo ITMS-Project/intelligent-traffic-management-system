@@ -70,3 +70,7 @@ class FuzzyTrafficController:
         self.green_duration['medium'] = fuzz.trimf(self.green_duration.universe, 
                                                     [20, 35, 50])
         self.green_duration['long'] = fuzz.trimf(self.green_duration.universe, 
+                                                  [40, self.max_green, self.max_green])
+        
+        # Define fuzzy rules
+        rule1 = ctrl.Rule(self.vehicle_count['low'], self.green_duration['short'])
