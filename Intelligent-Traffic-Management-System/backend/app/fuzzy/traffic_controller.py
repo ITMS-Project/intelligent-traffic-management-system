@@ -82,3 +82,7 @@ class FuzzyTrafficController:
         self.simulation = ctrl.ControlSystemSimulation(self.traffic_ctrl)
         
         print("✅ Fuzzy traffic controller initialized")
+    
+    def compute_green_duration(self, vehicle_count: int) -> int:
+        """
+        Compute optimal green light duration based on vehicle count.
