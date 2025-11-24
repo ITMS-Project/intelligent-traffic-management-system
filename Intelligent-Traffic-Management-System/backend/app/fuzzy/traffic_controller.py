@@ -78,3 +78,7 @@ class FuzzyTrafficController:
         rule3 = ctrl.Rule(self.vehicle_count['high'], self.green_duration['long'])
         
         # Create control system
+        self.traffic_ctrl = ctrl.ControlSystem([rule1, rule2, rule3])
+        self.simulation = ctrl.ControlSystemSimulation(self.traffic_ctrl)
+        
+        print("✅ Fuzzy traffic controller initialized")
