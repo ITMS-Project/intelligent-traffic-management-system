@@ -43,3 +43,6 @@ class SignalResponse(BaseModel):
     yellow_duration: int
     red_duration: int
     vehicle_count: int
+    traffic_level: str
+
+
