@@ -40,3 +40,6 @@ class SignalResponse(BaseModel):
     state: str
     remaining_time: int
     green_duration: int
+    yellow_duration: int
+    red_duration: int
+    vehicle_count: int
