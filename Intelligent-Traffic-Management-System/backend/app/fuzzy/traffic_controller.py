@@ -86,3 +86,7 @@ class FuzzyTrafficController:
     def compute_green_duration(self, vehicle_count: int) -> int:
         """
         Compute optimal green light duration based on vehicle count.
+        
+        Args:
+            vehicle_count: Number of vehicles waiting at intersection
+            
