@@ -58,3 +58,6 @@ async def get_signal_status():
 
 
 @router.post("/update", summary="Update signal timing based on traffic")
+async def update_signal(request: SignalUpdateRequest):
+    """
+    Update signal timing based on vehicle count using fuzzy logic.
