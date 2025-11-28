@@ -55,3 +55,6 @@ async def get_signal_status():
     """Get current traffic signal status."""
     signal = get_signal()
     return signal.get_status()
+
+
+@router.post("/update", summary="Update signal timing based on traffic")
