@@ -49,3 +49,6 @@ class SignalResponse(BaseModel):
 # =============================================================================
 # Endpoints
 # =============================================================================
+
+@router.get("/status", summary="Get signal status")
+async def get_signal_status():
