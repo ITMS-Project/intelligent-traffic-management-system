@@ -1,1 +1,0 @@
-Parking violation detection module setup by Ranidu

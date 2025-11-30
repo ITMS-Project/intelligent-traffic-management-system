@@ -20,38 +20,41 @@ class PyObjectId(ObjectId):
 
 class User(BaseModel):
     """User model for authentication."""
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-    
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
+
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     username: str
     email: str
     hashed_password: str
     role: str = "viewer"
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    
-    class Config:
-        json_encoders = {ObjectId: str}
 
 
 class Vehicle(BaseModel):
     """Vehicle model for detected vehicles."""
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-    
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
+
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     license_plate: Optional[str] = None
     vehicle_type: str
     color: Optional[str] = None
     make: Optional[str] = None
     model: Optional[str] = None
-    
-    class Config:
-        json_encoders = {ObjectId: str}
 
 
 class Violation(BaseModel):
     """Parking violation model."""
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-    
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str, datetime: lambda v: v.isoformat()}
+    )
+
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     vehicle_id: Optional[PyObjectId] = None
     vehicle_type: str
@@ -68,15 +71,15 @@ class Violation(BaseModel):
     status: str = "pending"
     officer_id: Optional[PyObjectId] = None
     notes: Optional[str] = None
-    
-    class Config:
-        json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
 
 
 class DetectionLog(BaseModel):
     """Log of all detections."""
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-    
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str, datetime: lambda v: v.isoformat()}
+    )
+
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     vehicle_type: str
     confidence: float
@@ -85,9 +88,6 @@ class DetectionLog(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     location: str
     image_path: Optional[str] = None
-    
-    class Config:
-        json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
 
 
 class ViolationStats(BaseModel):

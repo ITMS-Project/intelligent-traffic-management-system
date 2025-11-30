@@ -228,3 +228,4 @@ __pycache__/
 *.pyc
 
 .env
+runs/test_results/
