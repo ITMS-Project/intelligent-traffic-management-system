@@ -88,25 +88,25 @@ CONFIDENCE_THRESHOLD=0.5
 
 ## 🎮 Running the Applications
 
-### Option 1: Admin Dashboard (Enhanced Version)
+### Option 1: Admin Dashboard (Video Detection)
 
 ```bash
 # From project root
-streamlit run src/dashboard/app_enhanced.py
+streamlit run src/dashboard/app_with_video.py
 ```
 
 **Features:**
-- 📊 Real-time statistics from MongoDB
-- 📹 Upload and process videos
-- ⚠️ View and manage violations
-- 📈 Interactive analytics
-- 🤖 Uses your trained YOLOv8 model
+- 🎬 Create annotated videos with live detections
+- 📹 Upload and process videos with fast sampling
+- 📊 Real-time detection statistics
+- ⬇️ Download annotated videos
+- 🎨 Colored bounding boxes showing all detections
 
 **Default URL:** http://localhost:8501
 
 ---
 
-### Option 2: Mobile User App (Enhanced Version)
+### Option 2: Mobile User App
 
 ```bash
 # From project root
@@ -133,16 +133,16 @@ streamlit run src/dashboard/user_app_enhanced.py
 ### Option 3: Run Both Simultaneously
 
 ```bash
-# Terminal 1: Admin Dashboard
-streamlit run src/dashboard/app_enhanced.py --server.port 8501
+# Terminal 1: Admin Dashboard (Video Detection)
+streamlit run src/dashboard/app_with_video.py --server.port 8501
 
-# Terminal 2: Mobile App
+# Terminal 2: Mobile User App
 streamlit run src/dashboard/user_app_enhanced.py --server.port 8502
 ```
 
 Then access:
 - Admin Dashboard: http://localhost:8501
-- Mobile App: http://localhost:8502
+- Mobile User App: http://localhost:8502
 
 ---
 
