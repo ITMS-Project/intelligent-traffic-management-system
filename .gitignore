@@ -229,3 +229,4 @@ __pycache__/
 
 .env
 runs/test_results/
+logs/
