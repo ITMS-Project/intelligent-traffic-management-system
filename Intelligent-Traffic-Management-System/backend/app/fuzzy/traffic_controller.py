@@ -94,3 +94,7 @@ class FuzzyTrafficController:
             Green light duration in seconds
         """
         # Clamp vehicle count to valid range
+        vehicle_count = max(0, min(30, vehicle_count))
+        
+        if self.simulation is not None:
+            try:
