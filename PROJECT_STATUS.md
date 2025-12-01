@@ -253,4 +253,4 @@ mongosh parking_violations_db --eval "db.violations.countDocuments()"
 
 ---
 
-**Generated with [Claude Code](https://claude.com/claude-code)**
+
