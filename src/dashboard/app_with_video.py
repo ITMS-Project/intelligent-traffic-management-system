@@ -10,6 +10,8 @@ import traceback
 import cv2
 import numpy as np
 import time
+import plotly.express as px
+import pandas as pd
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
@@ -19,7 +21,7 @@ from src.database import db, violation_ops
 from src.dashboard.styles import DASHBOARD_CSS
 
 st.set_page_config(
-    page_title="VRNAVS - Traffic Control",
+    page_title="Traffic Control",
     page_icon="👁️",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -186,13 +188,106 @@ def create_annotated_video(input_path, output_path, sample_rate, progress_placeh
     return True
 
 
+def show_analytics_tab():
+    """Display analytics dashboard"""
+    st.markdown("### 📈 TRAFFIC IMPACT ANALYTICS")
+    
+    # Mock data for demonstration (replace with DB calls in production)
+    # 1. Violations by Type
+    data_type = {
+        'Violation': ['Illegal Parking', 'Bus Lane', 'Double Parking', 'Blocking Driveway'],
+        'Count': [45, 12, 8, 15]
+    }
+    df_type = pd.DataFrame(data_type)
+    
+    fig_type = px.pie(df_type, values='Count', names='Violation', title='Violations by Type',
+                      color_discrete_sequence=px.colors.sequential.RdBu)
+    
+    # 2. Hourly Heatmap
+    data_hour = {
+        'Hour': list(range(24)),
+        'Violations': [2,1,0,0,1,3,8,15,22,18,14,12,10,12,16,25,30,28,20,15,10,5,3,2]
+    }
+    df_hour = pd.DataFrame(data_hour)
+    
+    fig_hour = px.bar(df_hour, x='Hour', y='Violations', title='Violation Heatmap (24h)',
+                      color='Violations', color_continuous_scale='Viridis')
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.plotly_chart(fig_type, use_container_width=True)
+    with col2:
+        st.plotly_chart(fig_hour, use_container_width=True)
+        
+    # Impact Metrics
+    st.markdown("### 🚦 CONGESTION IMPACT")
+    col3, col4, col5 = st.columns(3)
+    col3.metric("Avg. Delay Added", "4.2 min", "+12%")
+    col4.metric("Lane Blockage", "15%", "-5%")
+    col5.metric("Economic Loss (Est)", "LKR 45,000", "+2%")
+
+
+def show_events_tab():
+    """Display detailed event list"""
+    st.markdown("### 📋 DETECTED ILLEGAL PARKING EVENTS")
+    
+    # Mock data
+    events = [
+        {"ID": "V-001", "Plate": "CAB-1234", "Type": "Car", "Time": "10:45 AM", "Duration": "12m", "Status": "Pending", "Fine": "LKR 2,500"},
+        {"ID": "V-002", "Plate": "WP-4567", "Type": "TukTuk", "Time": "11:02 AM", "Duration": "5m", "Status": "Warning", "Fine": "LKR 0"},
+        {"ID": "V-003", "Plate": "NB-9876", "Type": "Van", "Time": "11:15 AM", "Duration": "45m", "Status": "Notified", "Fine": "LKR 4,500"},
+        {"ID": "V-004", "Plate": "KV-1122", "Type": "Bus", "Time": "11:30 AM", "Duration": "2m", "Status": "Pending", "Fine": "LKR 5,000"},
+    ]
+    
+    df = pd.DataFrame(events)
+    st.dataframe(
+        df,
+        column_config={
+            "Status": st.column_config.SelectboxColumn(
+                "Status",
+                help="The status of the violation",
+                width="medium",
+                options=["Pending", "Warning", "Notified", "Paid"],
+            )
+        },
+        hide_index=True,
+        use_container_width=True
+    )
+
+
+def show_admin_tab():
+    """Display admin functions"""
+    st.markdown("### 🛡️ ADMIN CONTROL PANEL")
+    
+    st.write("#### 🚧 No Parking Zone Management")
+    st.info("Adjust the coordinates of the restricted zone polygon.")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        x1 = st.slider("Point 1 X", 0, 100, 10)
+        y1 = st.slider("Point 1 Y", 0, 100, 10)
+    with col2:
+        x2 = st.slider("Point 2 X", 0, 100, 90)
+        y2 = st.slider("Point 2 Y", 0, 100, 90)
+        
+    st.button("Update Zone Polygon")
+    
+    st.divider()
+    
+    st.write("#### 💾 Data Management")
+    if st.button("📥 Export Violation Data (CSV)"):
+        st.success("Export started... (Simulation)")
+        time.sleep(1)
+        st.download_button("Click to Download", data="ID,Plate,Time\nV-001,CAB-1234,10:45", file_name="violations.csv")
+
+
 def main():
     """Main app"""
     
     # Custom Header
     st.markdown("""
         <div class="main-header">
-            <div class="header-title">VRNAVS <span style="font-weight:300; opacity:0.7">| TRAFFIC CONTROL</span></div>
+            <div class="header-title">TRAFFIC CONTROL</div>
             <div style="font-size: 0.8rem; opacity: 0.7">SYSTEM ONLINE</div>
         </div>
     """, unsafe_allow_html=True)
@@ -224,64 +319,81 @@ def main():
         st.info("System Ready. Waiting for input stream.")
 
     if video_file:
-        # Main Content Area
-        col1, col2 = st.columns([3, 1])
+        # Tabs for different views
+        tab1, tab2, tab3, tab4 = st.tabs(["📹 LIVE MONITOR", "📈 ANALYTICS", "📋 EVENTS", "🛡️ ADMIN"])
         
-        with col1:
-            st.write("### 📹 LIVE FEED ANALYSIS")
+        with tab1:
+            # Main Content Area
+            col1, col2 = st.columns([3, 1])
             
-            # Save input
-            input_path = f"/tmp/{video_file.name}"
-            with open(input_path, "wb") as f:
-                f.write(video_file.read())
-
-            output_path = f"/tmp/annotated_{video_file.name}"
-            
-            # Placeholder for video
-            video_placeholder = st.empty()
-            
-            if st.button("▶ INITIATE ANALYSIS", type="primary", use_container_width=True):
+            with col1:
+                st.write("### 📹 LIVE FEED ANALYSIS")
                 
-                progress_placeholder = st.progress(0)
-                status_placeholder = st.empty()
-                
-                try:
-                    success = create_annotated_video(
-                        input_path,
-                        output_path,
-                        sample_rate,
-                        progress_placeholder,
-                        status_placeholder
-                    )
+                # Save input
+                input_path = f"/tmp/{video_file.name}"
+                with open(input_path, "wb") as f:
+                    f.write(video_file.read())
 
-                    if success and Path(output_path).exists():
-                        # Display result in custom container
-                        st.markdown('<div class="video-container">', unsafe_allow_html=True)
-                        st.video(output_path)
-                        st.markdown('</div>', unsafe_allow_html=True)
-                        
-                        # Download button
-                        with open(output_path, "rb") as f:
-                            st.download_button(
-                                label="⬇ EXPORT DATA",
-                                data=f,
-                                file_name=f"annotated_{video_file.name}",
-                                mime="video/mp4",
-                                use_container_width=True
-                            )
-                except Exception as e:
-                    st.error(f"System Error: {e}")
-                    st.code(traceback.format_exc())
-        
-        with col2:
-            st.write("### 📊 METRICS")
-            st.metric("Active Violations", "0", delta="0")
-            st.metric("System Load", "12%", delta="-2%")
-            st.metric("Network", "1.2 GB/s", delta="+0.1")
+                output_path = f"/tmp/annotated_{video_file.name}"
+                
+                # Placeholder for video
+                video_placeholder = st.empty()
+                
+                if st.button("▶ INITIATE ANALYSIS", type="primary", use_container_width=True):
+                    
+                    progress_placeholder = st.progress(0)
+                    status_placeholder = st.empty()
+                    
+                    try:
+                        success = create_annotated_video(
+                            input_path,
+                            output_path,
+                            sample_rate,
+                            progress_placeholder,
+                            status_placeholder
+                        )
+
+                        if success and Path(output_path).exists():
+                            # Display result in custom container
+                            st.markdown('<div class="video-container">', unsafe_allow_html=True)
+                            st.video(output_path)
+                            st.markdown('</div>', unsafe_allow_html=True)
+                            
+                            # Download button
+                            with open(output_path, "rb") as f:
+                                st.download_button(
+                                    label="⬇ EXPORT DATA",
+                                    data=f,
+                                    file_name=f"annotated_{video_file.name}",
+                                    mime="video/mp4",
+                                    use_container_width=True
+                                )
+                    except Exception as e:
+                        st.error(f"System Error: {e}")
+                        st.code(traceback.format_exc())
             
-            st.write("---")
-            st.write("### 📍 LOCATION")
-            st.map(data={'lat': [6.9271], 'lon': [79.8612]}, zoom=13)
+            with col2:
+                st.write("### 📊 METRICS")
+                st.metric("Active Violations", "0", delta="0")
+                st.metric("System Load", "12%", delta="-2%")
+                st.metric("Network", "1.2 GB/s", delta="+0.1")
+                
+                st.write("---")
+                st.write("### 📍 LOCATION")
+                st.map(data={'lat': [6.9271], 'lon': [79.8612]}, zoom=13)
+                
+                st.write("---")
+                st.write("### ⚠️ WARNING STATUS")
+                st.info("No active warnings sent to drivers.")
+
+        with tab2:
+            show_analytics_tab()
+            
+        with tab3:
+            show_events_tab()
+            
+        with tab4:
+            show_admin_tab()
 
     else:
         # Empty state
