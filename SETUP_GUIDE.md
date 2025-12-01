@@ -413,4 +413,3 @@ You have successfully built a complete intelligent traffic management system wit
 
 ---
 
-**Generated with [Claude Code](https://claude.com/claude-code)**
