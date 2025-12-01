@@ -98,3 +98,7 @@ class FuzzyTrafficController:
         
         if self.simulation is not None:
             try:
+                self.simulation.input['vehicle_count'] = vehicle_count
+                self.simulation.compute()
+                duration = int(self.simulation.output['green_duration'])
+                return max(self.min_green, min(self.max_green, duration))
