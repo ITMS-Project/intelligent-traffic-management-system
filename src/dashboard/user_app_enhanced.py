@@ -7,6 +7,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 import sys
+import time
 from pathlib import Path
 
 # Add parent directory to path
@@ -17,7 +18,7 @@ from src.dashboard.styles import MOBILE_CSS
 
 # Mobile-optimized configuration
 st.set_page_config(
-    page_title="VRNAVS Mobile",
+    page_title="Traffic App",
     page_icon="🚗",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -53,7 +54,7 @@ def show_login_page():
     
     st.markdown(
         '<div class="app-header">'
-        '<div class="app-title">VRNAVS</div>'
+        '<div class="app-title">TRAFFIC APP</div>'
         '<div class="app-subtitle">INTELLIGENT TRAFFIC CONTROL</div>'
         '</div>',
         unsafe_allow_html=True
@@ -196,18 +197,21 @@ def show_home_page():
     )
 
     # Navigation tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["OVERVIEW", "VIOLATIONS", "VEHICLES", "PROFILE"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["OVERVIEW", "MAP", "VIOLATIONS", "VEHICLES", "PROFILE"])
 
     with tab1:
         show_home_tab()
 
     with tab2:
-        show_violations_tab()
+        show_map_tab()
 
     with tab3:
-        show_vehicles_tab()
+        show_violations_tab()
 
     with tab4:
+        show_vehicles_tab()
+
+    with tab5:
         show_profile_tab()
 
 
@@ -286,6 +290,37 @@ def show_home_tab():
         st.error(f"Error loading data: {e}")
 
 
+
+def show_map_tab():
+    """Display map with parking zones"""
+    st.write("")
+    st.write("### 🗺️ PARKING ZONES")
+    
+    # Mock data for map
+    # Red = No Parking, Green = Allowed
+    map_data = pd.DataFrame({
+        'lat': [6.9271, 6.9275, 6.9265],
+        'lon': [79.8612, 79.8618, 79.8605],
+        'type': ['illegal', 'legal', 'legal'],
+        'color': ['#FF0000', '#00FF00', '#00FF00']
+    })
+    
+    st.map(map_data, zoom=15)
+    
+    st.info("🔴 Red: No Parking Zone | 🟢 Green: Allowed Parking")
+    
+    st.write("### 📡 LIVE ALERTS")
+    if st.button("Simulate Zone Entry"):
+        with st.spinner("Detecting location..."):
+            time.sleep(1.5)
+        
+        st.error("⚠️ WARNING: YOU ARE ENTERING A NO-PARKING ZONE!")
+        st.caption("Please move your vehicle immediately to avoid fines.")
+        
+        # Audio alert simulation (visual only for web)
+        st.toast("🔊 Audio Alert: 'Warning, Illegal Parking Zone'")
+
+
 def show_violations_tab():
     """Violations tab with full list"""
     st.write("")
@@ -327,7 +362,15 @@ def show_violations_tab():
                 
                 if violation['status'] == 'pending':
                     if st.button(f"PAY NOW", key=f"pay_{violation['_id']}"):
-                        st.success("Payment Gateway Simulation: Success")
+                        with st.status("Processing Payment...", expanded=True) as status:
+                            st.write("Connecting to Gateway...")
+                            time.sleep(1)
+                            st.write("Verifying Card Details...")
+                            time.sleep(1)
+                            status.update(label="Payment Successful!", state="complete", expanded=False)
+                        
+                        st.success(f"✅ Paid LKR {violation['fine_amount']:,.0f}")
+                        st.balloons()
 
     except Exception as e:
         st.error(f"Error: {e}")
