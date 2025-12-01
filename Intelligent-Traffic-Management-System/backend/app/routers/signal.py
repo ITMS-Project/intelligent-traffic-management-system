@@ -61,3 +61,6 @@ async def get_signal_status():
 async def update_signal(request: SignalUpdateRequest):
     """
     Update signal timing based on vehicle count using fuzzy logic.
+    
+    This endpoint:
+    1. Takes the current vehicle count
