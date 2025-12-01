@@ -90,3 +90,7 @@ class FuzzyTrafficController:
         Args:
             vehicle_count: Number of vehicles waiting at intersection
             
+        Returns:
+            Green light duration in seconds
+        """
+        # Clamp vehicle count to valid range
