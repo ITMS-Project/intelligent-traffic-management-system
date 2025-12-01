@@ -64,3 +64,6 @@ async def update_signal(request: SignalUpdateRequest):
     
     This endpoint:
     1. Takes the current vehicle count
+    2. Runs fuzzy inference to determine optimal green duration
+    3. Updates the signal timing parameters
+    
