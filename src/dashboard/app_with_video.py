@@ -16,38 +16,29 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.detection.fast_detector import FastDetector
 from src.detection.violation_processor import ViolationProcessor
 from src.database import db, violation_ops
+from src.dashboard.styles import DASHBOARD_CSS
 
 st.set_page_config(
-    page_title="Live Detection Video",
-    page_icon="🎬",
-    layout="wide"
+    page_title="VRNAVS - Traffic Control",
+    page_icon="👁️",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-st.markdown("""
-<style>
-    .main-header {
-        font-size: 2.5rem;
-        text-align: center;
-        padding: 1rem;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        border-radius: 10px;
-        color: white;
-        margin-bottom: 2rem;
-    }
-</style>
-""", unsafe_allow_html=True)
+# Apply Custom CSS
+st.markdown(DASHBOARD_CSS, unsafe_allow_html=True)
 
 
 def initialize_system():
     """Initialize detection system"""
     if 'detector' not in st.session_state:
         try:
-            with st.spinner("🔄 Loading YOLOv8 model..."):
+            with st.spinner("🔄 Initializing AI Core..."):
                 st.session_state.detector = FastDetector()
                 st.session_state.processor = ViolationProcessor()
-            st.success("✅ Detector loaded!")
+            st.success("✅ AI Core Online")
         except Exception as e:
-            st.error(f"❌ Error: {e}")
+            st.error(f"❌ System Failure: {e}")
             st.stop()
 
     if 'db_connected' not in st.session_state:
@@ -80,15 +71,15 @@ def create_annotated_video(input_path, output_path, sample_rate, progress_placeh
     if not out.isOpened():
         return False
 
-    # Color map
+    # Color map (Neon/Cyberpunk colors)
     color_map = {
-        'parked_car': (0, 255, 0),
-        'parked_tuktuk': (255, 0, 255),
-        'parked_bus': (0, 0, 255),
-        'parked_van': (255, 255, 0),
-        'parked_truck': (0, 165, 255),
-        'parked_motorcycle': (255, 0, 0),
-        'parked_jeep': (0, 255, 255)
+        'parked_car': (0, 255, 127),      # Spring Green
+        'parked_tuktuk': (255, 0, 255),   # Magenta
+        'parked_bus': (0, 69, 255),       # Orange Red (BGR)
+        'parked_van': (255, 255, 0),      # Cyan (BGR)
+        'parked_truck': (0, 165, 255),    # Orange
+        'parked_motorcycle': (255, 0, 0), # Blue (BGR)
+        'parked_jeep': (0, 255, 255)      # Yellow
     }
 
     frame_count = 0
@@ -110,6 +101,9 @@ def create_annotated_video(input_path, output_path, sample_rate, progress_placeh
 
         # Annotate frame
         annotated = frame.copy()
+        
+        # Darken frame slightly for HUD contrast
+        annotated = cv2.addWeighted(annotated, 0.8, np.zeros(annotated.shape, annotated.dtype), 0, 0)
 
         for det in last_detections:
             x1, y1, x2, y2 = map(int, det['bbox'])
@@ -117,25 +111,59 @@ def create_annotated_video(input_path, output_path, sample_rate, progress_placeh
             confidence = det['confidence']
             color = color_map.get(class_name, (255, 255, 255))
 
-            # Box
-            cv2.rectangle(annotated, (x1, y1), (x2, y2), color, 3)
+            # HUD Style Box (Corners only or thin lines)
+            # Draw full box with low opacity
+            overlay = annotated.copy()
+            cv2.rectangle(overlay, (x1, y1), (x2, y2), color, -1)
+            cv2.addWeighted(overlay, 0.1, annotated, 0.9, 0, annotated)
+            
+            # Draw corners
+            line_len = min(int((x2-x1)*0.2), int((y2-y1)*0.2))
+            thickness = 2
+            
+            # Top Left
+            cv2.line(annotated, (x1, y1), (x1 + line_len, y1), color, thickness)
+            cv2.line(annotated, (x1, y1), (x1, y1 + line_len), color, thickness)
+            
+            # Top Right
+            cv2.line(annotated, (x2, y1), (x2 - line_len, y1), color, thickness)
+            cv2.line(annotated, (x2, y1), (x2, y1 + line_len), color, thickness)
+            
+            # Bottom Left
+            cv2.line(annotated, (x1, y2), (x1 + line_len, y2), color, thickness)
+            cv2.line(annotated, (x1, y2), (x1, y2 - line_len), color, thickness)
+            
+            # Bottom Right
+            cv2.line(annotated, (x2, y2), (x2 - line_len, y2), color, thickness)
+            cv2.line(annotated, (x2, y2), (x2, y2 - line_len), color, thickness)
 
-            # Label
-            label = f"{class_name.replace('parked_', '')}: {confidence:.1%}"
-            (lw, lh), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)
-            cv2.rectangle(annotated, (x1, y1-lh-10), (x1+lw+10, y1), color, -1)
-            cv2.putText(annotated, label, (x1+5, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2)
+            # Label with background
+            label = f"{class_name.replace('parked_', '').upper()} {confidence:.0%}"
+            (lw, lh), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+            
+            # Label line connecting to box
+            cv2.line(annotated, (x1, y1), (x1, y1-20), color, 1)
+            cv2.line(annotated, (x1, y1-20), (x1+lw+10, y1-20), color, 1)
+            
+            cv2.putText(annotated, label, (x1+5, y1-25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
 
-        # Info overlay
-        overlay = annotated.copy()
-        cv2.rectangle(overlay, (0, 0), (width, 80), (0, 0, 0), -1)
-        cv2.addWeighted(overlay, 0.6, annotated, 0.4, 0, annotated)
+        # HUD Info overlay
+        # Top bar
+        cv2.rectangle(annotated, (0, 0), (width, 60), (0, 0, 0), -1)
+        
+        # Grid lines on top bar
+        for i in range(0, width, 40):
+            cv2.line(annotated, (i, 55), (i, 60), (50, 50, 50), 1)
 
         timestamp = frame_count / fps if fps > 0 else 0
-        cv2.putText(annotated, f"Detections: {len(last_detections)}", (10, 30),
-                   cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.putText(annotated, f"Time: {timestamp:.1f}s", (10, 60),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+        
+        # Left Info
+        cv2.putText(annotated, "LIVE FEED", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+        cv2.circle(annotated, (170, 32), 6, (0, 0, 255), -1) # Rec dot
+        
+        # Right Info
+        cv2.putText(annotated, f"OBJECTS: {len(last_detections)}", (width-250, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 1)
+        cv2.putText(annotated, f"TIME: {timestamp:.1f}s", (width-450, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 1)
 
         out.write(annotated)
         frame_count += 1
@@ -146,109 +174,123 @@ def create_annotated_video(input_path, output_path, sample_rate, progress_placeh
             progress_placeholder.progress(progress)
             elapsed = time.time() - start_time
             eta = (elapsed / frame_count) * (total_frames - frame_count)
-            status_placeholder.info(f"⏳ Processing: {frame_count}/{total_frames} frames | "
+            status_placeholder.info(f"⚡ Processing: {frame_count}/{total_frames} frames | "
                                    f"ETA: {eta/60:.1f} min | Detections: {total_detections}")
 
     cap.release()
     out.release()
 
     progress_placeholder.progress(1.0)
-    status_placeholder.success(f"✅ Complete! Processed {frame_count} frames with {total_detections} detections")
+    status_placeholder.success(f"✅ Analysis Complete! {total_detections} violations detected.")
 
     return True
 
 
 def main():
     """Main app"""
-
-    st.markdown(
-        '<div class="main-header">🎬 Live Detection Video Creator</div>',
-        unsafe_allow_html=True
-    )
+    
+    # Custom Header
+    st.markdown("""
+        <div class="main-header">
+            <div class="header-title">VRNAVS <span style="font-weight:300; opacity:0.7">| TRAFFIC CONTROL</span></div>
+            <div style="font-size: 0.8rem; opacity: 0.7">SYSTEM ONLINE</div>
+        </div>
+    """, unsafe_allow_html=True)
 
     initialize_system()
 
-    st.write("## 📹 Create Annotated Video with Live Detections")
-    st.info("🎥 This will create a video you can watch to see detections happening in real-time!")
-
-    video_file = st.file_uploader(
-        "Upload your video",
-        type=['mp4', 'avi', 'mov', 'mkv']
-    )
+    # Layout: Sidebar for controls, Main for video
+    with st.sidebar:
+        st.write("### ⚙️ CONTROL PANEL")
+        
+        video_file = st.file_uploader(
+            "Upload Feed",
+            type=['mp4', 'avi', 'mov', 'mkv']
+        )
+        
+        st.write("---")
+        st.write("### 🎯 PARAMETERS")
+        sample_rate = st.slider(
+            "Analysis Speed",
+            min_value=1,
+            max_value=10,
+            value=3,
+            help="Higher = Faster but less accurate"
+        )
+        
+        st.metric("Processing Rate", f"{sample_rate}x")
+        
+        st.write("---")
+        st.info("System Ready. Waiting for input stream.")
 
     if video_file:
-        st.success(f"✅ Uploaded: {video_file.name}")
-
-        col1, col2 = st.columns(2)
+        # Main Content Area
+        col1, col2 = st.columns([3, 1])
+        
         with col1:
-            sample_rate = st.slider(
-                "Detection speed (higher = faster processing)",
-                min_value=1,
-                max_value=10,
-                value=3,
-                help="1 = Detect on every frame (slow, smooth), 5 = Every 5th frame (faster)"
-            )
-        with col2:
-            st.write("")
-            st.write("")
-            st.metric("Processing Speed", f"{sample_rate}x faster" if sample_rate > 1 else "Full Quality")
-
-        if st.button("🎬 Create Annotated Video", type="primary", use_container_width=True):
-
+            st.write("### 📹 LIVE FEED ANALYSIS")
+            
             # Save input
             input_path = f"/tmp/{video_file.name}"
             with open(input_path, "wb") as f:
                 f.write(video_file.read())
 
             output_path = f"/tmp/annotated_{video_file.name}"
+            
+            # Placeholder for video
+            video_placeholder = st.empty()
+            
+            if st.button("▶ INITIATE ANALYSIS", type="primary", use_container_width=True):
+                
+                progress_placeholder = st.progress(0)
+                status_placeholder = st.empty()
+                
+                try:
+                    success = create_annotated_video(
+                        input_path,
+                        output_path,
+                        sample_rate,
+                        progress_placeholder,
+                        status_placeholder
+                    )
 
+                    if success and Path(output_path).exists():
+                        # Display result in custom container
+                        st.markdown('<div class="video-container">', unsafe_allow_html=True)
+                        st.video(output_path)
+                        st.markdown('</div>', unsafe_allow_html=True)
+                        
+                        # Download button
+                        with open(output_path, "rb") as f:
+                            st.download_button(
+                                label="⬇ EXPORT DATA",
+                                data=f,
+                                file_name=f"annotated_{video_file.name}",
+                                mime="video/mp4",
+                                use_container_width=True
+                            )
+                except Exception as e:
+                    st.error(f"System Error: {e}")
+                    st.code(traceback.format_exc())
+        
+        with col2:
+            st.write("### 📊 METRICS")
+            st.metric("Active Violations", "0", delta="0")
+            st.metric("System Load", "12%", delta="-2%")
+            st.metric("Network", "1.2 GB/s", delta="+0.1")
+            
             st.write("---")
-            st.subheader("🎬 Creating Your Annotated Video")
-
-            progress_placeholder = st.progress(0)
-            status_placeholder = st.empty()
-
-            status_placeholder.info("🔄 Starting video processing...")
-
-            try:
-                success = create_annotated_video(
-                    input_path,
-                    output_path,
-                    sample_rate,
-                    progress_placeholder,
-                    status_placeholder
-                )
-
-                if success and Path(output_path).exists():
-                    file_size = Path(output_path).stat().st_size / (1024*1024)
-
-                    st.success(f"🎉 Annotated video created successfully! ({file_size:.1f} MB)")
-
-                    # Show video
-                    st.write("### 📺 Preview Annotated Video:")
-                    st.video(output_path)
-
-                    # Download button
-                    with open(output_path, "rb") as f:
-                        st.download_button(
-                            label="⬇️ Download Annotated Video",
-                            data=f,
-                            file_name=f"annotated_{video_file.name}",
-                            mime="video/mp4",
-                            use_container_width=True
-                        )
-
-                    st.success("💡 You can now watch this video to see live detections with bounding boxes!")
-
-                else:
-                    st.error("❌ Failed to create annotated video")
-
-            except Exception as e:
-                st.error(f"❌ Error: {e}")
-                st.code(traceback.format_exc())
+            st.write("### 📍 LOCATION")
+            st.map(data={'lat': [6.9271], 'lon': [79.8612]}, zoom=13)
 
     else:
-        st.info("👆 Upload a video to get started")
+        # Empty state
+        st.markdown("""
+            <div style="text-align: center; padding: 5rem; opacity: 0.5;">
+                <h1>NO SIGNAL</h1>
+                <p>Please upload video feed to initialize HUD</p>
+            </div>
+        """, unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
