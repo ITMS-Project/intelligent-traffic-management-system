@@ -102,3 +102,7 @@ class FuzzyTrafficController:
                 self.simulation.compute()
                 duration = int(self.simulation.output['green_duration'])
                 return max(self.min_green, min(self.max_green, duration))
+            except Exception as e:
+                print(f"⚠️ Fuzzy computation error: {e}")
+        
+        # Fallback: Linear interpolation
