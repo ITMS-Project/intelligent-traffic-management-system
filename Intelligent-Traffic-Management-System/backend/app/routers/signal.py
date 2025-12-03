@@ -73,3 +73,6 @@ async def update_signal(request: SignalUpdateRequest):
     - High traffic (15+ vehicles) → Long green (~40-60s)
     """
     signal = get_signal()
+    recommendation = signal.update_timing(request.vehicle_count)
+    
+    return {
