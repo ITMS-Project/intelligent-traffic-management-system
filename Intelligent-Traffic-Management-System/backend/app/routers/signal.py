@@ -67,3 +67,6 @@ async def update_signal(request: SignalUpdateRequest):
     2. Runs fuzzy inference to determine optimal green duration
     3. Updates the signal timing parameters
     
+    The fuzzy rules:
+    - Low traffic (0-5 vehicles) → Short green (~10-20s)
+    - Medium traffic (5-15 vehicles) → Medium green (~20-40s)
