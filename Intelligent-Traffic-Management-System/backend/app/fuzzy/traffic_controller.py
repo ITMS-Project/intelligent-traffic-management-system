@@ -106,3 +106,7 @@ class FuzzyTrafficController:
                 print(f"⚠️ Fuzzy computation error: {e}")
         
         # Fallback: Linear interpolation
+        return self._linear_fallback(vehicle_count)
+    
+    def _linear_fallback(self, vehicle_count: int) -> int:
+        """Fallback linear interpolation if fuzzy system unavailable."""
