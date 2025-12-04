@@ -114,3 +114,7 @@ class FuzzyTrafficController:
         ratio = vehicle_count / 30.0
         duration = self.min_green + ratio * (self.max_green - self.min_green)
         return int(duration)
+    
+    def get_traffic_level(self, vehicle_count: int) -> str:
+        """
+        Get traffic level classification.
