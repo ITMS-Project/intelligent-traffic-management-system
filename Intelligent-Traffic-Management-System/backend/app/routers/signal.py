@@ -76,3 +76,6 @@ async def update_signal(request: SignalUpdateRequest):
     recommendation = signal.update_timing(request.vehicle_count)
     
     return {
+        "message": "Signal timing updated",
+        "recommendation": recommendation,
+        "signal_status": signal.get_status(),
