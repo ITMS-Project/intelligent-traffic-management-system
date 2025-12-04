@@ -79,3 +79,6 @@ async def update_signal(request: SignalUpdateRequest):
         "message": "Signal timing updated",
         "recommendation": recommendation,
         "signal_status": signal.get_status(),
+    }
+
+
