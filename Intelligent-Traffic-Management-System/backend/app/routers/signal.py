@@ -82,3 +82,6 @@ async def update_signal(request: SignalUpdateRequest):
     }
 
 
+@router.post("/set-state", summary="Manually set signal state")
+async def set_signal_state(request: SignalStateRequest):
+    """
