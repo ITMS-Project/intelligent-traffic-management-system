@@ -110,3 +110,7 @@ class FuzzyTrafficController:
     
     def _linear_fallback(self, vehicle_count: int) -> int:
         """Fallback linear interpolation if fuzzy system unavailable."""
+        # Map 0-30 vehicles to min_green-max_green seconds
+        ratio = vehicle_count / 30.0
+        duration = self.min_green + ratio * (self.max_green - self.min_green)
+        return int(duration)
