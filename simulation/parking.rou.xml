@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    
+    <!-- Vehicle Types -->
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.5" length="5" minGap="2.5" maxSpeed="50" color="0,1,0"/>
+    <vType id="violator" accel="2.6" decel="4.5" sigma="0.5" length="5" minGap="2.5" maxSpeed="50" color="1,0,0"/>
+
+    <!-- Traffic Flow -->
+    <!-- Note: netgenerate usually creates edges like 'A0B0' or similar. We need to check the edge names. 
+         But often it creates 'top0to1' etc. 
+         Let's assume standard grid naming or check the file content after generation.
+         For a 1x2 grid, edges might be A0toA1. 
+         Safest is to define a route that we know exists or inspect the net file.
+         
+         Actually, let's just use a simple flow on the first available edge.
+    -->
+    <route id="r1" edges="A0B0"/>
+
+    <flow id="f1" type="car" route="r1" begin="0" end="3600" number="100"/>
+    
+    <vehicle id="v_illegal" type="violator" route="r1" depart="10">
+        <stop lane="A0B0_0" startPos="100" endPos="105" duration="3600"/>
+    </vehicle>
+
+</routes>
