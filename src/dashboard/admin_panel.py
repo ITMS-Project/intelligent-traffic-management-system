@@ -633,10 +633,11 @@ def show_admin_tab():
 # ============================================================================
 # 🎬 MAIN APPLICATION
 # ============================================================================
+
 def main():
     """Main application entry point"""
     
-    st.markdown(get_header_html("TRAFFIC COMMAND CENTER", "ALL SYSTEMS OPERATIONAL"), unsafe_allow_html=True)
+    st.markdown(get_header_html("INTELLIGENT TRAFFIC MANAGEMENT SYSTEM", "TRAFFIC COMMAND CENTER | SYSTEM ONLINE"), unsafe_allow_html=True)
     
     initialize_system()
     
