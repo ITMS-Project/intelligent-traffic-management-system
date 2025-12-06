@@ -118,3 +118,7 @@ class FuzzyTrafficController:
     def get_traffic_level(self, vehicle_count: int) -> str:
         """
         Get traffic level classification.
+        
+        Args:
+            vehicle_count: Number of vehicles
+            
