@@ -122,3 +122,7 @@ class FuzzyTrafficController:
         Args:
             vehicle_count: Number of vehicles
             
+        Returns:
+            Traffic level: 'low', 'medium', or 'high'
+        """
+        if vehicle_count <= 5:
