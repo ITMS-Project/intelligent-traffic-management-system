@@ -637,11 +637,11 @@ def show_admin_tab():
 def main():
     """Main application entry point"""
     
-    # 1. Top Header (Small Bar)
-    st.markdown(get_header_html("TRAFFIC COMMAND CENTER", "ALL SYSTEMS OPERATIONAL"), unsafe_allow_html=True)
-    
-    # 2. Hero Text (Big Center Title)
+    # 1. Hero Text (System Name)
     st.markdown(get_hero_text_html(["INTELLIGENT", "TRAFFIC", "MANAGEMENT"]), unsafe_allow_html=True)
+
+    # 2. Control Bar (Dashboard Title)
+    st.markdown(get_header_html("TRAFFIC COMMAND CENTER", "ALL SYSTEMS OPERATIONAL"), unsafe_allow_html=True)
     
     initialize_system()
     
