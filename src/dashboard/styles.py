@@ -537,6 +537,8 @@ DASHBOARD_CSS = """
         text-transform: uppercase;
         letter-spacing: 4px;
         line-height: 1.1;
+        text-align: center;
+        margin-bottom: 3rem;
     }
 
     .hero-text span {
