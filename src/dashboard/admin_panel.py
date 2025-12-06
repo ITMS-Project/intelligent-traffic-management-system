@@ -751,37 +751,17 @@ def main():
         
         with tab6:
             show_admin_tab()
-                        padding: 0.5rem 1.5rem;
-                        background: rgba(255, 255, 255, 0.1);
-                        border: 1px solid rgba(255, 255, 255, 0.3);
-                        border-radius: 50px;
-                        color: #ffffff;
-                        font-size: 0.8rem;
-                        letter-spacing: 2px;
-                        animation: pulse 2s ease-in-out infinite;
-                    ">AWAITING INPUT</span>
-                </div>
-            </div>
-            
-            <style>
-                @keyframes pulse {
-                    0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
-                    50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.4); }
-                }
-            </style>
-            """, unsafe_allow_html=True)
-            
-            st.markdown("<div style='height: 3rem;'></div>", unsafe_allow_html=True)
-            
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                st.metric("Model Accuracy", "88.3%")
-            with col2:
-                st.metric("Vehicle Classes", "7")
-            with col3:
-                st.metric("Total Detections", "540+")
-            with col4:
-                st.metric("System Status", "Online")
+        st.markdown("<div style='height: 3rem;'></div>", unsafe_allow_html=True)
+        
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Model Accuracy", "88.3%")
+        with col2:
+            st.metric("Vehicle Classes", "7")
+        with col3:
+            st.metric("Total Detections", "540+")
+        with col4:
+            st.metric("System Status", "Online")
 
 if __name__ == "__main__":
     main()
