@@ -88,3 +88,6 @@ async def set_signal_state(request: SignalStateRequest):
     Manually set the traffic signal state.
     
     States: 'red', 'yellow', 'green'
+    Optionally provide duration in seconds.
+    """
+    signal = get_signal()
