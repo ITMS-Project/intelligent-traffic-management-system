@@ -113,22 +113,34 @@ def create_annotated_video(input_path, output_path, sample_rate, progress_placeh
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
-            break
+            # Loop video
+            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            continue
+        
+        # Simple frame skipping for performance
+        if frame_count % sample_rate != 0:
+            frame_count += 1
+            continue
 
-        if frame_count % sample_rate == 0:
-            detections = detector.detect_frame(frame)
-            last_detections = detections
-            total_detections += len(detections)
-            
-            for det in detections:
-                violation = {
-                    'frame': frame_count,
-                    'timestamp': frame_count / fps if fps > 0 else 0,
-                    'class': det['class_name'],
-                    'confidence': det['confidence'],
-                    'bbox': det['bbox']
-                }
-                all_violations.append(violation)
+        detections = detector.detect_frame(frame)
+        last_detections = detections
+        total_detections += len(detections)
+        
+        # Save violations to DB
+        for det in detections:
+            violation = {
+                'frame': frame_count,
+                'timestamp': datetime.utcnow(),
+                'violation_type': det['class_name'],
+                'confidence': float(det['confidence']),
+                # Mock data for demo
+                'fine_amount': 2500,
+                'status': 'pending', 
+                'vehicle_type': 'car',
+            }
+            # Only insert occasionally to avoid DB spam in loop
+            if frame_count % (sample_rate * 5) == 0:
+                 db['violations'].insert_one(violation)
 
         annotated = frame.copy()
         
@@ -172,71 +184,31 @@ def create_annotated_video(input_path, output_path, sample_rate, progress_placeh
         cv2.rectangle(annotated, (0, 0), (width, 50), (5, 5, 5), -1)
         cv2.line(annotated, (0, 50), (width, 50), (136, 255, 0), 1)  # Neon green line
 
-        timestamp = frame_count / fps if fps > 0 else 0
-        
         # Neon text
-        cv2.putText(annotated, "LIVE ANALYSIS", (20, 35), 
+        cv2.putText(annotated, "LIVE SIMULATION", (20, 35), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (136, 255, 0), 2, cv2.LINE_AA)
         
         # Pulsing dot
         if int(time.time() * 2) % 2 == 0:
-            cv2.circle(annotated, (180, 30), 8, (136, 255, 0), -1)
+            cv2.circle(annotated, (250, 30), 8, (136, 255, 0), -1)
         
-        info_text = f"OBJECTS: {len(last_detections)}"
-        cv2.putText(annotated, info_text, (width - 200, 35), 
+        info_text = f"DETECTIONS: {total_detections}"
+        cv2.putText(annotated, info_text, (width - 250, 35), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 212, 0), 1, cv2.LINE_AA)
         
-        time_text = f"T+{timestamp:.1f}s"
-        cv2.putText(annotated, time_text, (width - 350, 35), 
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.6, (136, 255, 0), 1, cv2.LINE_AA)
 
-        out.write(annotated)
+        # Convert to RGB for Streamlit
+        annotated_rgb = cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB)
+        progress_placeholder.image(annotated_rgb, use_column_width=True)
+        
         frame_count += 1
-
-        if frame_count % 30 == 0:
-            progress = frame_count / total_frames
-            progress_placeholder.progress(progress)
-            elapsed = time.time() - start_time
-            eta = (elapsed / frame_count) * (total_frames - frame_count) if frame_count > 0 else 0
-            status_placeholder.markdown(f"""
-            <div style="
-                background-color: rgba(30, 30, 30, 0.9);
-                color: #ffffff;
-                padding: 10px;
-                border-radius: 5px;
-                border: 1px solid #444;
-                font-family: 'Inter', sans-serif;
-                font-size: 0.9rem;
-                display: flex;
-                align-items: center;
-            ">
-                <span style="margin-right: 10px;">⚡</span>
-                Processing: {frame_count}/{total_frames} frames | ETA: {eta:.0f}s | Detections: {total_detections}
-            </div>
-            """, unsafe_allow_html=True)
+        
+        # Stop button logic (needs to be passed in or check session state)
+        if not st.session_state.get('simulation_running', False):
+            break
 
     cap.release()
-    out.release()
-
-    progress_placeholder.progress(1.0)
-    status_placeholder.markdown(f"""
-    <div style="
-        background-color: rgba(30, 30, 30, 0.9);
-        color: #ffffff;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #00ff88;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-    ">
-        <span style="margin-right: 10px;">✅</span>
-        Analysis Complete! {total_detections} violations detected.
-    </div>
-    """, unsafe_allow_html=True)
-
-    return True, all_violations
+    return True, []
 
 
 # ============================================================================
@@ -682,19 +654,18 @@ def main():
     # Main Input Section
     st.markdown("""
     <div style="background: rgba(20, 20, 20, 0.5); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 2rem;">
-        <h3 style="margin-top: 0; color: #fff; font-family: 'Orbitron', sans-serif;">📡 INPUT SOURCE</h3>
+        <h3 style="margin-top: 0; color: #fff; font-family: 'Orbitron', sans-serif;">📡 SIMULATION FEED</h3>
     </div>
     """, unsafe_allow_html=True)
 
     col_input, col_settings, col_status = st.columns([2, 1, 1])
     
     with col_input:
-        video_file = st.file_uploader("📹 Upload Traffic Feed (MP4/AVI)", type=['mp4', 'avi', 'mov', 'mkv'])
+        st.info("ℹ️ System is running in **Simulation Mode**. Violations will be generated automatically from the demo feed.")
     
     with col_settings:
         st.markdown("**⚡ Analysis Speed**")
         sample_rate = st.slider("Frame Skip", min_value=1, max_value=10, value=3, help="Higher = Faster, Lower = More Accurate")
-        st.caption(f"Processing every {sample_rate} frame(s)")
         
     with col_status:
         st.markdown("**🖥️ System Status**")
@@ -705,99 +676,81 @@ def main():
     
     
     with results_container:
-        if video_file:
-            tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-                "📹 LIVE MONITOR", 
-                "📊 ANALYTICS", 
-                "📋 VIOLATIONS",
-                "⚠️ WARNINGS",
-                "💰 FINES",
-                "⚙️ ADMIN"
-            ])
+        # Default Tabs
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+            "📹 LIVE MONITOR", 
+            "📊 ANALYTICS", 
+            "📋 VIOLATIONS",
+            "⚠️ WARNINGS",
+            "💰 FINES",
+            "⚙️ ADMIN"
+        ])
+        
+        with tab1:
+            col1, col2 = st.columns([3, 1])
             
-            with tab1:
-                col1, col2 = st.columns([3, 1])
+            with col1:
+                st.markdown("""
+                <div style="margin-bottom: 1rem;">
+                    <h3 style="font-family: 'Rajdhani', sans-serif; color: #ffffff; margin: 0;">
+                        LIVE FEED ANALYSIS
+                    </h3>
+                </div>
+                """, unsafe_allow_html=True)
                 
-                with col1:
-                    st.markdown("""
-                    <div style="margin-bottom: 1rem;">
-                        <h3 style="font-family: 'Rajdhani', sans-serif; color: #ffffff; margin: 0;">
-                            LIVE FEED ANALYSIS
-                        </h3>
-                    </div>
-                    """, unsafe_allow_html=True)
+                # Check for simulation file
+                sim_path = Path(__file__).parent.parent.parent / "assets" / "simulation.mp4"
+                
+                if not sim_path.exists():
+                    st.error(f"❌ Simulation video not found at: `{sim_path}`")
+                    st.warning("Please upload a video file named `simulation.mp4` to the `assets` folder.")
+                else:
+                    # Toggle for start/stop
+                    if 'simulation_running' not in st.session_state:
+                        st.session_state.simulation_running = False
                     
-                    input_path = f"/tmp/{video_file.name}"
-                    with open(input_path, "wb") as f:
-                        f.write(video_file.read())
-                    
-                    output_path = f"/tmp/annotated_{video_file.name}"
-                    
-                    if st.button("▶ START ANALYSIS", type="primary", use_container_width=True):
-                        # Force Progress Bar Color
-                        st.markdown("""
-                        <style>
-                            .stProgress > div > div > div > div { background-color: #cccccc !important; }
-                        </style>
-                        """, unsafe_allow_html=True)
-                        progress_placeholder = st.progress(0)
+                    col_start, col_stop = st.columns(2)
+                    with col_start:
+                        if st.button("▶ START SIMULATION", type="primary", use_container_width=True, disabled=st.session_state.simulation_running):
+                            st.session_state.simulation_running = True
+                            st.rerun()
+                    with col_stop:
+                        if st.button("⏹ STOP SIMULATION", type="secondary", use_container_width=True, disabled=not st.session_state.simulation_running):
+                            st.session_state.simulation_running = False
+                            st.rerun()
+
+                    if st.session_state.simulation_running:
+                        progress_placeholder = st.empty()
                         status_placeholder = st.empty()
                         
                         try:
-                            success, violations = create_annotated_video(
-                                input_path, output_path, sample_rate,
+                            # Run simulation loop
+                            create_annotated_video(
+                                str(sim_path), None, sample_rate,
                                 progress_placeholder, status_placeholder
                             )
-                            
-                            if success and Path(output_path).exists():
-                                st.video(output_path)
-                                
-                                with open(output_path, "rb") as f:
-                                    st.download_button(
-                                        label="⬇ DOWNLOAD ANALYZED VIDEO",
-                                        data=f,
-                                        file_name=f"analyzed_{video_file.name}",
-                                        mime="video/mp4",
-                                        use_container_width=True
-                                    )
                         except Exception as e:
-                            st.error(f"❌ Analysis Error: {e}")
-                
-                with col2:
-                    st.markdown("### LIVE STATS")
-                    st.metric("Active Detections", "0")
-                    st.metric("Violations Today", "127")
-                    st.metric("Fines Collected", "LKR 425K")
-            
-            with tab2:
-                show_analytics_tab()
-            
-            with tab3:
-                show_events_tab()
-            
-            with tab4:
-                show_warnings_tab()
-            
-            with tab5:
-                show_fines_tab()
-            
-            with tab6:
-                show_admin_tab()
+                            st.error(f"❌ Simulation Error: {e}")
+                            st.session_state.simulation_running = False
+
+            with col2:
+                # Stats are already handled in the loop/above
+                pass
+
+        with tab2:
+            show_analytics_tab()
         
-        else:
-            st.markdown("""
-            <div style="text-align: center; padding: 4rem 2rem;">
-                <div class="hero-text">
-                    <div>INTELLIGENT</div>
-                    <div><span>TRAFFIC</span></div>
-                    <div>MANAGEMENT</div>
-                </div>
-                <p style="color: #666; font-size: 1rem; margin-top: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
-                    Upload traffic footage to begin AI-powered violation detection and analysis.
-                </p>
-                <div style="margin-top: 2rem;">
-                    <span style="
-                        display: inline-block;
+        with tab3:
+            show_events_tab()
+        
+        with tab4:
+            show_warnings_tab()
+        
+        with tab5:
+            show_fines_tab()
+        
+        with tab6:
+            show_admin_tab()
                         padding: 0.5rem 1.5rem;
                         background: rgba(255, 255, 255, 0.1);
                         border: 1px solid rgba(255, 255, 255, 0.3);

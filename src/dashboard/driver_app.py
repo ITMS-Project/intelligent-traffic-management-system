@@ -28,6 +28,8 @@ from src.dashboard.styles import (
 import base64
 from gtts import gTTS
 import io
+from src.database.connection import Database
+import bcrypt
 
 def play_voice_warning(text):
     """Generate and play voice warning using gTTS"""
@@ -99,25 +101,45 @@ def show_login():
     
     with tab1:
         st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
-        
-        phone = st.text_input("Phone Number", placeholder="Enter your phone number", key="login_phone")
+
+        username = st.text_input("Username or Phone", placeholder="Enter username or phone", key="login_phone")
         password = st.text_input("Password", type="password", placeholder="Enter password", key="login_pass")
-        
+
         st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
-        
+
         if st.button("LOGIN", type="primary", use_container_width=True):
-            if phone and password:
-                st.session_state.logged_in = True
-                st.session_state.user = {
-                    "name": "John Driver",
-                    "phone": phone,
-                    "email": "john@example.com",
-                    "score": 85,
-                    "member_since": "Jan 2024"
-                }
-                st.rerun()
+            if username and password:
+                # Connect to database
+                db_instance = Database()
+                db = db_instance.get_db()
+                users_col = db['users']
+
+                # Find user
+                user = users_col.find_one({
+                    '$or': [
+                        {'username': username},
+                        {'phone': username}
+                    ]
+                })
+
+                if user and bcrypt.checkpw(password.encode(), user['password_hash']):
+                    st.session_state.logged_in = True
+                    st.session_state.user = {
+                        "id": str(user['_id']),
+                        "name": user.get('full_name', user['username']),
+                        "username": user['username'],
+                        "phone": user.get('phone', ''),
+                        "email": user.get('email', ''),
+                        "score": user.get('safety_score', 100),
+                        "member_since": user.get('created_at', datetime.now()).strftime("%b %Y")
+                    }
+                    st.success("✅ Login successful!")
+                    time.sleep(0.5)
+                    st.rerun()
+                else:
+                    st.error("❌ Invalid username/phone or password")
             else:
-                st.error("Please enter phone and password")
+                st.error("Please enter username and password")
         
         st.markdown("""
         <div style="text-align: center; margin-top: 1.5rem;">
@@ -127,29 +149,92 @@ def show_login():
     
     with tab2:
         st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
-        
+
         reg_name = st.text_input("Full Name", placeholder="Enter your full name", key="reg_name")
-        reg_phone = st.text_input("Phone Number", placeholder="Enter phone number", key="reg_phone")
-        reg_email = st.text_input("Email", placeholder="Enter email address", key="reg_email")
-        reg_vehicle = st.text_input("Vehicle Plate", placeholder="e.g., CAB-1234", key="reg_vehicle")
-        reg_type = st.selectbox("Vehicle Type", ["Car", "TukTuk", "Van", "Motorcycle", "Bus", "Truck"])
-        reg_password = st.text_input("Password", type="password", placeholder="Create password", key="reg_pass")
-        
+        reg_username = st.text_input("Username", placeholder="Choose a username", key="reg_username")
+        reg_phone = st.text_input("Phone Number", placeholder="+94771234567", key="reg_phone")
+        reg_email = st.text_input("Email", placeholder="your@email.com", key="reg_email")
+        reg_vehicle = st.text_input("Vehicle Plate", placeholder="e.g., WP CAB-1234", key="reg_vehicle")
+        reg_type = st.selectbox("Vehicle Type", ["car", "tuktuk", "van", "motorcycle", "bus", "truck"])
+        reg_password = st.text_input("Password", type="password", placeholder="Create password (min 6 chars)", key="reg_pass")
+        reg_confirm = st.text_input("Confirm Password", type="password", placeholder="Re-enter password", key="reg_confirm")
+
         st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
-        
+
         if st.button("CREATE ACCOUNT", type="primary", use_container_width=True):
-            if reg_name and reg_phone and reg_password:
-                st.session_state.logged_in = True
-                st.session_state.user = {
-                    "name": reg_name,
-                    "phone": reg_phone,
-                    "email": reg_email,
-                    "score": 100,
-                    "member_since": datetime.now().strftime("%b %Y")
-                }
-                st.rerun()
+            if not all([reg_name, reg_username, reg_phone, reg_password, reg_vehicle]):
+                st.error("❌ Please fill in all required fields")
+            elif len(reg_password) < 6:
+                st.error("❌ Password must be at least 6 characters")
+            elif reg_password != reg_confirm:
+                st.error("❌ Passwords do not match")
             else:
-                st.error("Please fill in all required fields")
+                try:
+                    # Connect to database
+                    db_instance = Database()
+                    db = db_instance.get_db()
+                    users_col = db['users']
+                    vehicles_col = db['vehicles']
+
+                    # Check if username/phone already exists
+                    existing = users_col.find_one({
+                        '$or': [
+                            {'username': reg_username},
+                            {'phone': reg_phone}
+                        ]
+                    })
+
+                    if existing:
+                        st.error("❌ Username or phone number already registered")
+                    else:
+                        # Hash password
+                        password_hash = bcrypt.hashpw(reg_password.encode(), bcrypt.gensalt())
+
+                        # Create user
+                        user_doc = {
+                            'username': reg_username,
+                            'email': reg_email,
+                            'password_hash': password_hash,
+                            'full_name': reg_name,
+                            'phone': reg_phone,
+                            'role': 'driver',
+                            'safety_score': 100,
+                            'score_badge': 'Excellent',
+                            'created_at': datetime.now(),
+                            'fcm_token': None
+                        }
+
+                        user_result = users_col.insert_one(user_doc)
+                        user_id = user_result.inserted_id
+
+                        # Create vehicle
+                        vehicle_doc = {
+                            'owner_id': str(user_id),
+                            'license_plate': reg_vehicle.upper(),
+                            'vehicle_type': reg_type.lower(),
+                            'registered_at': datetime.now()
+                        }
+
+                        vehicles_col.insert_one(vehicle_doc)
+
+                        # Auto-login
+                        st.session_state.logged_in = True
+                        st.session_state.user = {
+                            "id": str(user_id),
+                            "name": reg_name,
+                            "username": reg_username,
+                            "phone": reg_phone,
+                            "email": reg_email,
+                            "score": 100,
+                            "member_since": datetime.now().strftime("%b %Y")
+                        }
+
+                        st.success(f"✅ Account created successfully! Welcome, {reg_name}!")
+                        time.sleep(1)
+                        st.rerun()
+
+                except Exception as e:
+                    st.error(f"❌ Registration failed: {str(e)}")
 
 
 # ============================================================================

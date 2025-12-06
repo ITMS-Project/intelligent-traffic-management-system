@@ -24,6 +24,7 @@ opencv-python
 torch>=2.0.0
 torchvision
 numpy
+easyocr
 
 # Data Processing
 pandas
@@ -39,3 +40,6 @@ python-dateutil==2.8.2
 requests==2.31.0
 traci
 gTTS==2.5.0
+
+# Payment Gateways
+stripe>=5.0.0
