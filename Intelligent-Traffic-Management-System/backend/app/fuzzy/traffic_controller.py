@@ -126,3 +126,7 @@ class FuzzyTrafficController:
             Traffic level: 'low', 'medium', or 'high'
         """
         if vehicle_count <= 5:
+            return 'low'
+        elif vehicle_count <= 15:
+            return 'medium'
+        else:
