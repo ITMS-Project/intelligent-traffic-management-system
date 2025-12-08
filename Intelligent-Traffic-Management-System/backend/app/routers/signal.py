@@ -91,3 +91,6 @@ async def set_signal_state(request: SignalStateRequest):
     Optionally provide duration in seconds.
     """
     signal = get_signal()
+    
+    try:
+        signal.set_state(request.state, request.duration)
