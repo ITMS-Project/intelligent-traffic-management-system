@@ -130,3 +130,7 @@ class FuzzyTrafficController:
         elif vehicle_count <= 15:
             return 'medium'
         else:
+            return 'high'
+    
+    def get_signal_recommendation(self, vehicle_count: int) -> dict:
+        """
