@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Ensure script runs from project root
+cd "$(dirname "$0")/.."
+
 # Stop all services
 
 echo "🛑 Stopping all services..."
