@@ -138,3 +138,7 @@ class FuzzyTrafficController:
         
         Args:
             vehicle_count: Number of vehicles at intersection
+            
+        Returns:
+            Dictionary with duration, traffic_level, and recommendation details
+        """
