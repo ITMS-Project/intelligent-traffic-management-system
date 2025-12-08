@@ -134,3 +134,7 @@ class FuzzyTrafficController:
     
     def get_signal_recommendation(self, vehicle_count: int) -> dict:
         """
+        Get full signal recommendation with all details.
+        
+        Args:
+            vehicle_count: Number of vehicles at intersection
