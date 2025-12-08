@@ -142,3 +142,7 @@ class FuzzyTrafficController:
         Returns:
             Dictionary with duration, traffic_level, and recommendation details
         """
+        duration = self.compute_green_duration(vehicle_count)
+        traffic_level = self.get_traffic_level(vehicle_count)
+        
+        return {
