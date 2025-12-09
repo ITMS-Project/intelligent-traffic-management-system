@@ -99,9 +99,9 @@ graph TB
     K --> R
     L --> R
     
-    style D fill:#FFD700
-    style G fill:#90EE90
-    style Q fill:#87CEEB
+    style D fill:#FFD700,color:#000000,stroke:#333,stroke-width:2px
+    style G fill:#90EE90,color:#000000,stroke:#333,stroke-width:2px
+    style Q fill:#87CEEB,color:#000000,stroke:#333,stroke-width:2px
 ```
 
 ### Architecture Overview
@@ -281,25 +281,25 @@ intelligent-traffic-management-system/
 - [x] Created frame extraction pipeline
 - [x] Set up GitHub repository with proper structure
 
-### Phase 2: Dataset Creation (Oct 28 - Nov 10, 2025)
+### Phase 2: Dataset Creation ✅ (Oct 28 - Nov 10, 2025)
 
-- [ ] Extract representative frames from videos
-- [ ] Annotate 3,000+ images with parking behaviors
-- [ ] Integrate external parking violation datasets
-- [ ] Create synthetic training data for edge cases
+- [x] Extract representative frames from videos
+- [x] Annotate 3,000+ images with parking behaviors
+- [x] Integrate external parking violation datasets
+- [x] Create synthetic training data for edge cases
 
-### Phase 3: Model Training (Nov 11 - Nov 25, 2025)
+### Phase 3: Model Training ✅ (Nov 11 - Nov 25, 2025)
 
-- [ ] Train custom YOLOv8 model for vehicle detection
-- [ ] Implement DeepSORT for vehicle tracking
-- [ ] Develop traffic impact analysis algorithms
-- [ ] Test and validate on held-out test set
+- [x] Train custom YOLOv8 model for vehicle detection
+- [x] Implement DeepSORT for vehicle tracking
+- [x] Develop traffic impact analysis algorithms
+- [x] Test and validate on held-out test set
 
-### Phase 4: System Integration (Nov 26 - Dec 10, 2025)
+### Phase 4: System Integration 🔄 (Nov 26 - Dec 10, 2025)
 
 - [ ] Integrate all four components
-- [ ] Build Streamlit dashboard
-- [ ] Set up Arduino hardware for physical alerts
+- [x] Build Streamlit dashboard
+- [x] Set up Arduino hardware for physical alerts
 - [ ] End-to-end system testing
 
 ### Phase 5: Evaluation & Documentation (Dec 11 - Dec 20, 2025)
