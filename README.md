@@ -240,3 +240,4 @@ This project is for educational and demonstration purposes.
 <!-- update -->
 <!-- Update detection region of interest coordinates -->
 <!-- Update utility helper functions -->
+<!-- Fix race condition in thread management -->
