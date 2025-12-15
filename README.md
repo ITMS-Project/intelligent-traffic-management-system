@@ -243,3 +243,4 @@ This project is for educational and demonstration purposes.
 <!-- Fix race condition in thread management -->
 <!-- Update output video resolution settings -->
 <!-- Update project metadata and versioning -->
+<!-- Update unit tests for scoring engine -->
