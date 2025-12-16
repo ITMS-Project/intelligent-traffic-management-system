@@ -249,3 +249,4 @@ This project is for educational and demonstration purposes.
 <!-- Update environment variable parsing -->
 <!-- Update monitoring dashboard layout -->
 <!-- Update license plate recognition regex -->
+<!-- Improve mobile responsiveness of monitor -->
