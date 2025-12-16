@@ -146,3 +146,7 @@ class FuzzyTrafficController:
         traffic_level = self.get_traffic_level(vehicle_count)
         
         return {
+            "vehicle_count": vehicle_count,
+            "traffic_level": traffic_level,
+            "green_duration_sec": duration,
+            "yellow_duration_sec": 3,  # Standard yellow light
