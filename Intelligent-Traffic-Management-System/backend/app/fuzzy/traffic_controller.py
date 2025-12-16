@@ -154,3 +154,7 @@ class FuzzyTrafficController:
             "cycle_time_sec": duration + 3 + max(10, 70 - duration),
             "fuzzy_available": FUZZY_AVAILABLE,
         }
+
+
+# =============================================================================
+# Traffic Signal State Machine
