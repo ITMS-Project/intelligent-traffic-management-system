@@ -245,3 +245,4 @@ This project is for educational and demonstration purposes.
 <!-- Update project metadata and versioning -->
 <!-- Update unit tests for scoring engine -->
 <!-- Refactor directory structure for scalability -->
+<!-- Fix memory leak in frame buffer -->
