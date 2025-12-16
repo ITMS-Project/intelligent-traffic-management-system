@@ -248,3 +248,4 @@ This project is for educational and demonstration purposes.
 <!-- Fix memory leak in frame buffer -->
 <!-- Update environment variable parsing -->
 <!-- Update monitoring dashboard layout -->
+<!-- Update license plate recognition regex -->
