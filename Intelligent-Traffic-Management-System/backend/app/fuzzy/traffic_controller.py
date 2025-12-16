@@ -150,3 +150,7 @@ class FuzzyTrafficController:
             "traffic_level": traffic_level,
             "green_duration_sec": duration,
             "yellow_duration_sec": 3,  # Standard yellow light
+            "red_duration_sec": max(10, 70 - duration),  # Remaining time for cross traffic
+            "cycle_time_sec": duration + 3 + max(10, 70 - duration),
+            "fuzzy_available": FUZZY_AVAILABLE,
+        }
