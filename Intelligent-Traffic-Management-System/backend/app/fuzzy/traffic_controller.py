@@ -162,3 +162,7 @@ class FuzzyTrafficController:
 
 class TrafficSignal:
     """
+    Traffic signal state machine with timing control.
+    """
+    
+    STATES = ['red', 'yellow', 'green']
