@@ -94,3 +94,6 @@ async def set_signal_state(request: SignalStateRequest):
     
     try:
         signal.set_state(request.state, request.duration)
+    except ValueError as e:
+        return {"error": str(e)}
+    
