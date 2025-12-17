@@ -100,3 +100,6 @@ async def set_signal_state(request: SignalStateRequest):
     return {
         "message": f"Signal set to {request.state}",
         "signal_status": signal.get_status(),
+    }
+
+
