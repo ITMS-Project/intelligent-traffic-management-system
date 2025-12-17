@@ -251,3 +251,4 @@ This project is for educational and demonstration purposes.
 <!-- Update license plate recognition regex -->
 <!-- Improve mobile responsiveness of monitor -->
 <!-- Improve text-to-speech warning clarity -->
+<!-- Cleanup temporary cache files -->
