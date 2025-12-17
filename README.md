@@ -253,3 +253,4 @@ This project is for educational and demonstration purposes.
 <!-- Improve text-to-speech warning clarity -->
 <!-- Cleanup temporary cache files -->
 <!-- Refactor alert generation logic -->
+<!-- Optimize variable naming for readability -->
