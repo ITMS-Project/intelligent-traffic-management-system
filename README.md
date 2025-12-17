@@ -252,3 +252,4 @@ This project is for educational and demonstration purposes.
 <!-- Improve mobile responsiveness of monitor -->
 <!-- Improve text-to-speech warning clarity -->
 <!-- Cleanup temporary cache files -->
+<!-- Refactor alert generation logic -->
