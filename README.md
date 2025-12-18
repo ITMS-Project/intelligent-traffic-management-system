@@ -254,3 +254,4 @@ This project is for educational and demonstration purposes.
 <!-- Cleanup temporary cache files -->
 <!-- Refactor alert generation logic -->
 <!-- Optimize variable naming for readability -->
+<!-- Add validation for vehicle plate input strings -->
