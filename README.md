@@ -259,3 +259,4 @@ This project is for educational and demonstration purposes.
 <!-- Optimize database connection pool configuration -->
 <!-- Refactor parking duration calculation logic -->
 <!-- Reformat code according to PEP8 standards -->
+<!-- Handle edge case where vehicle stays stationary -->
