@@ -255,3 +255,4 @@ This project is for educational and demonstration purposes.
 <!-- Refactor alert generation logic -->
 <!-- Optimize variable naming for readability -->
 <!-- Add validation for vehicle plate input strings -->
+<!-- Optimize image processing pipeline speed -->
