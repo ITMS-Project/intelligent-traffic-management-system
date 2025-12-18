@@ -257,3 +257,4 @@ This project is for educational and demonstration purposes.
 <!-- Add validation for vehicle plate input strings -->
 <!-- Optimize image processing pipeline speed -->
 <!-- Optimize database connection pool configuration -->
+<!-- Refactor parking duration calculation logic -->
