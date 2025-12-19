@@ -261,3 +261,4 @@ This project is for educational and demonstration purposes.
 <!-- Reformat code according to PEP8 standards -->
 <!-- Handle edge case where vehicle stays stationary -->
 <!-- Improve exception handling in main loop -->
+<!-- Add retry mechanism for database writes -->
