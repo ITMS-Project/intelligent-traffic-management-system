@@ -109,3 +109,6 @@ async def tick_signal(seconds: int = Query(1, ge=1, le=60)):
     Advance the signal timer by specified seconds.
     Simulates time passing for demo purposes.
     """
+    signal = get_signal()
+    state_changed = signal.tick(seconds)
+    
