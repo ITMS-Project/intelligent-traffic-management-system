@@ -166,3 +166,7 @@ class TrafficSignal:
     """
     
     STATES = ['red', 'yellow', 'green']
+    
+    def __init__(self, signal_id: str = "main"):
+        self.signal_id = signal_id
+        self.state = 'red'
