@@ -170,3 +170,7 @@ class TrafficSignal:
     def __init__(self, signal_id: str = "main"):
         self.signal_id = signal_id
         self.state = 'red'
+        self.remaining_time = 30  # Default red duration
+        self.green_duration = 30
+        self.yellow_duration = 3
+        self.red_duration = 30
