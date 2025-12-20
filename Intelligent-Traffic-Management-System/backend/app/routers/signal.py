@@ -103,3 +103,6 @@ async def set_signal_state(request: SignalStateRequest):
     }
 
 
+@router.post("/tick", summary="Advance signal timer")
+async def tick_signal(seconds: int = Query(1, ge=1, le=60)):
+    """
