@@ -178,3 +178,7 @@ class TrafficSignal:
         self.last_update = None
         self.vehicle_count = 0
     
+    def update_timing(self, vehicle_count: int):
+        """Update signal timing based on vehicle count."""
+        self.vehicle_count = vehicle_count
+        recommendation = self.controller.get_signal_recommendation(vehicle_count)
