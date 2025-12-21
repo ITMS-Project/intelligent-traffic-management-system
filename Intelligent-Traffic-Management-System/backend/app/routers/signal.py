@@ -115,3 +115,6 @@ async def tick_signal(seconds: int = Query(1, ge=1, le=60)):
     return {
         "state_changed": state_changed,
         "signal_status": signal.get_status(),
+    }
+
+
