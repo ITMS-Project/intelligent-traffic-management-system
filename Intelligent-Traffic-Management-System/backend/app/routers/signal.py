@@ -118,3 +118,6 @@ async def tick_signal(seconds: int = Query(1, ge=1, le=60)):
     }
 
 
+@router.post("/reset", summary="Reset signal state to default")
+async def reset_signal():
+    """
