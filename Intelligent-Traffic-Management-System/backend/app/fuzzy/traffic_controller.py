@@ -174,3 +174,7 @@ class TrafficSignal:
         self.green_duration = 30
         self.yellow_duration = 3
         self.red_duration = 30
+        self.controller = FuzzyTrafficController()
+        self.last_update = None
+        self.vehicle_count = 0
+    
