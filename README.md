@@ -265,3 +265,4 @@ This project is for educational and demonstration purposes.
 <!-- Clean up logging statements in detection service -->
 <!-- Tune YOLO confidence levels for night time -->
 <!-- Enhance dashboard load time efficiency -->
+<!-- Fix minor typo in code comments -->
