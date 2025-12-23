@@ -182,3 +182,7 @@ class TrafficSignal:
         """Update signal timing based on vehicle count."""
         self.vehicle_count = vehicle_count
         recommendation = self.controller.get_signal_recommendation(vehicle_count)
+        
+        self.green_duration = recommendation['green_duration_sec']
+        self.red_duration = recommendation['red_duration_sec']
+        
