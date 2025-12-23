@@ -186,3 +186,7 @@ class TrafficSignal:
         self.green_duration = recommendation['green_duration_sec']
         self.red_duration = recommendation['red_duration_sec']
         
+        return recommendation
+    
+    def set_state(self, state: str, duration: int = None):
+        """Set signal state with optional duration override."""
