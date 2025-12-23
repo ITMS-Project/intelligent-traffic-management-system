@@ -127,3 +127,6 @@ async def reset_signal():
     signal = get_signal()
     signal.reset()
     return {
+        "message": "Signal reset to default",
+        "signal_status": signal.get_status(),
+    }
