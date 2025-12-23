@@ -268,3 +268,4 @@ This project is for educational and demonstration purposes.
 <!-- Fix minor typo in code comments -->
 <!-- Remove deprecated function calls -->
 <!-- Refactor main execution entry point -->
+<!-- Add debug logs for tracking persistence -->
