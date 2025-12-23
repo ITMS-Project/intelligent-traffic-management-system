@@ -124,3 +124,6 @@ async def reset_signal():
     Reset traffic signal to initial state (Red, 0 vehicles).
     Useful for restarting simulations.
     """
+    signal = get_signal()
+    signal.reset()
+    return {
