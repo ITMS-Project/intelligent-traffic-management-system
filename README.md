@@ -266,3 +266,4 @@ This project is for educational and demonstration purposes.
 <!-- Tune YOLO confidence levels for night time -->
 <!-- Enhance dashboard load time efficiency -->
 <!-- Fix minor typo in code comments -->
+<!-- Remove deprecated function calls -->
