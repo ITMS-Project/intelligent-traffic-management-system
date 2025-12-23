@@ -267,3 +267,4 @@ This project is for educational and demonstration purposes.
 <!-- Enhance dashboard load time efficiency -->
 <!-- Fix minor typo in code comments -->
 <!-- Remove deprecated function calls -->
+<!-- Refactor main execution entry point -->
