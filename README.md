@@ -263,3 +263,4 @@ This project is for educational and demonstration purposes.
 <!-- Improve exception handling in main loop -->
 <!-- Add retry mechanism for database writes -->
 <!-- Clean up logging statements in detection service -->
+<!-- Tune YOLO confidence levels for night time -->
