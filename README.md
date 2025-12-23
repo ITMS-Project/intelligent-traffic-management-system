@@ -264,3 +264,4 @@ This project is for educational and demonstration purposes.
 <!-- Add retry mechanism for database writes -->
 <!-- Clean up logging statements in detection service -->
 <!-- Tune YOLO confidence levels for night time -->
+<!-- Enhance dashboard load time efficiency -->
