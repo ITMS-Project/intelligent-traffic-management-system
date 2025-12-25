@@ -190,3 +190,7 @@ class TrafficSignal:
     
     def set_state(self, state: str, duration: int = None):
         """Set signal state with optional duration override."""
+        if state not in self.STATES:
+            raise ValueError(f"Invalid state: {state}. Must be one of {self.STATES}")
+        
+        self.state = state
