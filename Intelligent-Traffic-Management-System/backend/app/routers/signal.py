@@ -130,3 +130,6 @@ async def reset_signal():
         "message": "Signal reset to default",
         "signal_status": signal.get_status(),
     }
+
+
+@router.get("/compute", summary="Compute green duration without changing state")
