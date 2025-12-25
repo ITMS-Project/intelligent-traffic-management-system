@@ -133,3 +133,6 @@ async def reset_signal():
 
 
 @router.get("/compute", summary="Compute green duration without changing state")
+async def compute_duration(vehicle_count: int = Query(..., ge=0, le=100)):
+    """
+    Compute the recommended green light duration for a given vehicle count.
