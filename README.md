@@ -274,3 +274,4 @@ This project is for educational and demonstration purposes.
 <!-- Update detection model weights path -->
 <!-- Fix bug in API response format -->
 <!-- Update unit tests for scoring engine -->
+<!-- Update project metadata and versioning -->
