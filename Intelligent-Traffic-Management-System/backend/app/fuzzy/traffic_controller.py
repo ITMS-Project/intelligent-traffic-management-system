@@ -198,3 +198,7 @@ class TrafficSignal:
         if duration is not None:
             self.remaining_time = duration
         else:
+            if state == 'green':
+                self.remaining_time = self.green_duration
+            elif state == 'yellow':
+                self.remaining_time = self.yellow_duration
