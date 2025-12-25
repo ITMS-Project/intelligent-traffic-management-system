@@ -194,3 +194,7 @@ class TrafficSignal:
             raise ValueError(f"Invalid state: {state}. Must be one of {self.STATES}")
         
         self.state = state
+        
+        if duration is not None:
+            self.remaining_time = duration
+        else:
