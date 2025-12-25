@@ -275,3 +275,4 @@ This project is for educational and demonstration purposes.
 <!-- Fix bug in API response format -->
 <!-- Update unit tests for scoring engine -->
 <!-- Update project metadata and versioning -->
+<!-- Optimize CPU usage during idle times -->
