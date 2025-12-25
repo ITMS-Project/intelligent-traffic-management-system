@@ -271,3 +271,4 @@ This project is for educational and demonstration purposes.
 <!-- Add debug logs for tracking persistence -->
 <!-- Update API documentation in README -->
 <!-- Add comments to complex algorithm sections -->
+<!-- Update detection model weights path -->
