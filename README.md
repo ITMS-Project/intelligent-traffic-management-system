@@ -273,3 +273,4 @@ This project is for educational and demonstration purposes.
 <!-- Add comments to complex algorithm sections -->
 <!-- Update detection model weights path -->
 <!-- Fix bug in API response format -->
+<!-- Update unit tests for scoring engine -->
