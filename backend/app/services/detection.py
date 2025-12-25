@@ -17,6 +17,7 @@ Features:
 
 import sys
 import time
+import json
 from pathlib import Path
 from typing import Generator, Optional, List, Dict, Any, Tuple
 from dataclasses import dataclass, field
@@ -53,14 +54,14 @@ SPEEDING_THRESHOLD_PIXELS: float = 150.0  # pixels/second for demo
 
 # Parking violation timing
 # Parking violation timing
-PARKING_WARNING_SECONDS: float = 2.0  # Reduced for testing
-PARKING_VIOLATION_SECONDS: float = 5.0  # Reduced for testing
+PARKING_WARNING_SECONDS: float = 5.0 
+PARKING_VIOLATION_SECONDS: float = 15.0
 
 # Signal automation interval
 SIGNAL_UPDATE_INTERVAL: int = 30  # frames (~1 second at 30fps)
 
 # History cleanup
-PLATE_HISTORY_MAX_AGE: int = 30
+PLATE_HISTORY_MAX_AGE: int = 3000
 TRACKING_HISTORY_MAX_AGE: int = 60
 
 # TTS cooldown (don't spam warnings)
@@ -74,20 +75,7 @@ TTS_COOLDOWN_SECONDS: float = 10.0
 # Define parking zones as polygons (x, y) in frame coordinates
 # These are "no parking" zones - red boxes will be drawn
 # Adjust these coordinates based on your video feed
-DEFAULT_PARKING_ZONES = [
-    {
-        "id": "zone_1",
-        "name": "No Parking Zone 1",
-        "polygon": [(50, 400), (300, 400), (300, 550), (50, 550)],
-        "color": (0, 0, 255),  # Red
-    },
-    {
-        "id": "zone_2", 
-        "name": "No Parking Zone 2",
-        "polygon": [(500, 400), (750, 400), (750, 550), (500, 550)],
-        "color": (0, 0, 255),  # Red
-    },
-]
+DEFAULT_PARKING_ZONES = []
 
 
 # ============================================================================
@@ -119,8 +107,43 @@ _prev_plate_boxes: List[Tuple[int, int, int, int]] = []
 # Frame counter
 _frame_counter: int = 0
 
-# Parking zones (can be updated at runtime)
-parking_zones: List[Dict] = DEFAULT_PARKING_ZONES.copy()
+# Parking zones persistence
+ZONES_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "parking_zones.json"
+
+def load_zones_from_disk() -> List[Dict]:
+    """Load parking zones from JSON file."""
+    if not ZONES_FILE.exists():
+        return []
+    try:
+        with open(ZONES_FILE, "r") as f:
+            zones = json.load(f)
+            # Ensure polygons are tuples
+            for z in zones:
+                z["polygon"] = [tuple(p) for p in z["polygon"]]
+                z["color"] = tuple(z["color"])
+            return zones
+    except Exception as e:
+        print(f"Error loading zones: {e}")
+        return []
+
+def save_zones_to_disk(zones: List[Dict]):
+    """Save parking zones to JSON file."""
+    try:
+        # Convert tuples to lists for JSON
+        serializable_zones = []
+        for z in zones:
+            sz = z.copy()
+            sz["polygon"] = [list(p) for p in z["polygon"]]
+            sz["color"] = list(z["color"])
+            serializable_zones.append(sz)
+        
+        with open(ZONES_FILE, "w") as f:
+            json.dump(serializable_zones, f, indent=2)
+    except Exception as e:
+        print(f"Error saving zones: {e}")
+
+# Initialize zones from disk
+parking_zones: List[Dict] = load_zones_from_disk()
 
 
 # ============================================================================
@@ -310,17 +333,15 @@ def speak_warning(message: str, track_id: int = None, warning_type: str = None):
         else:
             warning_type = "parking_warning"  # Default
     
-    # Try to use TTS service - play cached audio (instant, non-blocking)
+    # Try to use TTS service
     tts = get_tts_service()
     if tts:
         try:
-            # Try cached playback first (instant, no generation)
-            played = tts.play_cached_warning(warning_type)
-            if not played:
-                # Fallback: play any available warning file
-                played = tts.play_any_warning()
-            if not played:
-                print(f"[TTS] No audio files available")
+            # Generate and play specific message (Vehicle ID etc)
+            # This ensures we don't rely on potentially missing cached files
+            print(f"[TTS] 🎙️ Generating audio for: '{message}'")
+            tts.speak(message, play=True)
+            
         except Exception as e:
             print(f"[TTS] Error: {e}")
 
@@ -399,10 +420,23 @@ def point_in_polygon(point: Tuple[int, int], polygon: List[Tuple[int, int]]) -> 
     return result >= 0
 
 
-def get_zone_for_point(point: Tuple[int, int]) -> Optional[Dict]:
+def get_zone_for_point(point: Tuple[int, int], frame_size: Tuple[int, int] = (1, 1)) -> Optional[Dict]:
     """Find which parking zone contains a point, if any."""
+    w, h = frame_size
+    
     for zone in parking_zones:
-        if point_in_polygon(point, zone["polygon"]):
+        poly_points = zone["polygon"]
+        
+        # Normalize check
+        is_normalized = all(all(c <= 1.0 for c in p) for p in poly_points)
+        
+        if is_normalized:
+            # Scale up for check
+            check_poly = [[int(x * w), int(y * h)] for x, y in poly_points]
+        else:
+            check_poly = poly_points
+
+        if point_in_polygon(point, check_poly):
             return zone
     return None
 
@@ -421,6 +455,7 @@ def get_zone_for_point(point: Tuple[int, int]) -> Optional[Dict]:
 def check_parking_violation(
     det: Detection,
     current_time: float,
+    frame_shape: Tuple[int, int] = (1920, 1080), # Default to HD if not provided
 ) -> Tuple[float, str, Optional[str], bool]:
     """
     Check if a vehicle is in a parking violation zone.
@@ -433,16 +468,20 @@ def check_parking_violation(
     track_id = det.track_id
     
     # Check if vehicle centroid is in any parking zone
-    zone = get_zone_for_point(det.centroid)
+    zone = get_zone_for_point(det.centroid, frame_shape)
     
     # GHOST LOGIC: If lost but in grace period, treat as present
     if zone is None and track_id in parking_tracker:
         entry = parking_tracker[track_id]
+        # Use stored zone ID to create a fake zone object for logic continuity
+        # We don't need polygon here, just ID
+        zone = {"id": entry["zone_id"]}
+        
         time_since_seen = current_time - entry.get("last_seen", current_time)
         
         if time_since_seen <= 5.0:  # Within grace period
             # Restore ghost zone
-            zone = {"id": entry["zone_id"]}
+             pass # zone is already set above
             # Do NOT update last_seen (it's lost)
         else:
             print(f"[DEBUG] Vehicle {track_id} lost for >5s -> Timer Reset")
@@ -466,17 +505,24 @@ def check_parking_violation(
             status = "violation"
             
             if not entry.get("penalized", False):
+                # Retrieve best plate (history or current)
+                best_plate = get_best_plate_text(track_id) or det.plate_text or entry.get("plate")
+                
+                if not best_plate:
+                     # print(f"[DEBUG] ❌ Failed to find plate for ID={track_id}...")
+                     pass
+                
                 # APPLY PENALTY TO DATABASE
                 _apply_parking_penalty(
                     track_id=track_id,
-                    plate_text=det.plate_text or entry.get("plate"),
+                    plate_text=best_plate,
                     zone_id=zone_id,
                 )
                 entry["penalized"] = True
                 penalized_vehicles[track_id] = current_time
                 
                 # TTS Violation announcement
-                plate_display = det.plate_text or f"Vehicle {track_id}"
+                plate_display = best_plate or f"Vehicle {track_id}"
                 speak_warning(
                     f"Violation recorded for {plate_display}. Fine has been issued.",
                     track_id
@@ -487,9 +533,10 @@ def check_parking_violation(
             
             if not entry.get("warned", False):
                 # TTS Warning
-                plate_display = det.plate_text or f"Vehicle {track_id}"
+                best_plate = get_best_plate_text(track_id) or det.plate_text or f"Vehicle {track_id}"
+                print(f"[WARNING] 🎙️ Voice Warning Issued to Vehicle {track_id} (Plate: {best_plate}) - 'Please move immediately'")
                 speak_warning(
-                    f"{plate_display}, please move immediately. You are in a no parking zone.",
+                    f"{best_plate}, please move immediately. You are in a no parking zone.",
                     track_id
                 )
                 entry["warned"] = True
@@ -503,7 +550,7 @@ def check_parking_violation(
         # Only update last_seen if we actually see it (zone is not None originally)
         # We know zone is not None here because of the Ghost logic above
         # But we need to distinguish Ghost vs Real
-        real_zone = get_zone_for_point(det.centroid)
+        real_zone = get_zone_for_point(det.centroid, frame_shape)
         if real_zone:
             entry["last_seen"] = current_time
         
@@ -514,7 +561,7 @@ def check_parking_violation(
         # Start tracking if vehicle is stationary in zone
         # Only start if REAL zone
         if zone and is_stationary:
-            print(f"[DEBUG] Vehicle {track_id} stationary in {zone_id} at {current_time:.1f}")
+            # print(f"[DEBUG] Vehicle {track_id} stationary in {zone_id} at {current_time:.1f}")
             parking_tracker[track_id] = {
                 "entry_time": current_time,
                 "zone_id": zone_id,
@@ -547,7 +594,11 @@ def _apply_parking_penalty(track_id: int, plate_text: str, zone_id: str):
             license_plate=plate_text,
             notes="Automated detection - illegal parking > 15 seconds",
         )
-        print(f"[PENALTY] 🚨 DB SAVED: {driver_id} | Score: {driver.current_score} | Fine: LKR {violation.fine_amount}")
+        print(f"\n[VIOLATION DETECTED] 🚨 PARKING VIOLATION > 15s")
+        print(f"Vehicle ID: {track_id}")
+        print(f"Plate No  : {plate_text or 'Unknown'}")
+        print(f"Fine Fee  : LKR {violation.fine_amount}")
+        print(f"Details   : Score Deducted (-{violation.points_deducted}), Current Score: {driver.current_score}\n")
         
     except Exception as e:
         print(f"[PENALTY] Error saving to DB: {e}")
@@ -555,6 +606,22 @@ def _apply_parking_penalty(track_id: int, plate_text: str, zone_id: str):
 
 
 
+
+def get_best_plate_text(track_id: int) -> Optional[str]:
+    """Retrieve the best available plate text from history."""
+    # 1. Check current history
+    if track_id in plate_history:
+        text = plate_history[track_id].get("text")
+        if text and len(text) > 3:
+            return text
+            
+    # 2. Check parking tracker
+    if track_id in parking_tracker:
+        text = parking_tracker[track_id].get("plate")
+        if text and len(text) > 3:
+            return text
+            
+    return None
 
 def cleanup_parking_tracker(active_track_ids: set):
     """Remove parking entries for vehicles no longer tracked (with grace period)."""
@@ -685,14 +752,23 @@ def detect_plates_in_crops(
         vx2, vy2 = min(w, vx2), min(h, vy2)
         
         crop_w, crop_h = vx2 - vx1, vy2 - vy1
-        if crop_w < 50 or crop_h < 50:
+        if crop_w < 20 or crop_h < 20:
+            # print(f"[DEBUG] Skip ID {det.track_id} too small {crop_w}x{crop_h}")
             continue
         
         vehicle_crop = frame[vy1:vy2, vx1:vx2]
         
-        results = plate_model.predict(source=vehicle_crop, conf=confidence, verbose=False)
+        # Debug for specific stationary vehicles
+        # if det.track_id in parking_tracker:
+        #      print(f"[DEBUG] 🔍 Scanning parked vehicle {det.track_id} for plates. Size: {crop_w}x{crop_h}")
+
+        # Adaptive confidence: Lower threshold for vehicles already tracked in parking zones
+        eff_conf = 0.1 if det.track_id in parking_tracker else confidence
+        
+        results = plate_model.predict(source=vehicle_crop, conf=eff_conf, verbose=False)
         
         if results and len(results) > 0 and results[0].boxes is not None:
+             # ... existing match logic ...
             boxes = results[0].boxes
             
             for i in range(len(boxes)):
@@ -727,6 +803,7 @@ def detect_plates_in_crops(
                             plate_text = new_text
                             # OCR success
                             track_id = det.track_id
+                            print(f"[DEBUG] 👁️ OCR READ: ID={track_id}, Text={new_text}")
                             if track_id:
                                 ocr_cooldown[track_id] = current_time
                 
@@ -823,7 +900,13 @@ def detect_and_track(
             det.plate_text = plate_info.get("text")
         
         # Check parking violations
-        parking_time, parking_status, zone_id, is_penalized = check_parking_violation(det, timestamp)
+        # Pass (width, height)
+        h, w = frame.shape[:2]
+        parking_time, parking_status, zone_id, is_penalized = check_parking_violation(
+            det, 
+            timestamp,
+            frame_shape=(w, h)
+        )
         det.parking_time = parking_time
         det.parking_status = parking_status
         det.parking_zone = zone_id
@@ -858,8 +941,21 @@ def detect_and_track(
 
 def draw_parking_zones(frame: np.ndarray) -> np.ndarray:
     """Draw the parking zone boundaries on the frame."""
+    h, w = frame.shape[:2]
+    
     for zone in parking_zones:
-        polygon = np.array(zone["polygon"], dtype=np.int32)
+        poly_points = zone["polygon"]
+        
+        # Check if normalized (all values <= 1.0)
+        is_normalized = all(all(c <= 1.0 for c in p) for p in poly_points)
+        
+        if is_normalized:
+            # Scale up
+            scaled_poly = [[int(x * w), int(y * h)] for x, y in poly_points]
+            polygon = np.array(scaled_poly, dtype=np.int32)
+        else:
+            polygon = np.array(poly_points, dtype=np.int32)
+
         color = zone.get("color", (0, 0, 255))
         
         # Draw filled polygon with transparency
@@ -871,7 +967,7 @@ def draw_parking_zones(frame: np.ndarray) -> np.ndarray:
         cv2.polylines(frame, [polygon], True, color, 2)
         
         # Draw zone label
-        x, y = zone["polygon"][0]
+        x, y = polygon[0]
         cv2.putText(frame, zone["name"], (x + 5, y + 20),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
     
@@ -962,10 +1058,15 @@ def draw_detections(
                 label += " | PENALIZED!"
             
             font = cv2.FONT_HERSHEY_SIMPLEX
-            (tw, th), _ = cv2.getTextSize(label, font, 0.5, 1)
+            font_scale = 0.8  # INCREASED for visibility
+            font_thickness = 2 # INCREASED thickness
             
-            cv2.rectangle(annotated, (x1, y1 - th - 10), (x1 + tw + 4, y1), color, -1)
-            cv2.putText(annotated, label, (x1 + 2, y1 - 5), font, 0.5, (255, 255, 255), 1)
+            (tw, th), _ = cv2.getTextSize(label, font, font_scale, font_thickness)
+            
+            # Draw label background with slight padding
+            cv2.rectangle(annotated, (x1, y1 - th - 12), (x1 + tw + 6, y1), color, -1)
+            # Draw label text
+            cv2.putText(annotated, label, (x1 + 3, y1 - 5), font, font_scale, (255, 255, 255), font_thickness)
     
     return annotated
 
@@ -986,10 +1087,12 @@ def draw_frame_info(frame: np.ndarray, result: FrameResult, extra_info: str = ""
     info_text = " | ".join(info_parts)
     
     font = cv2.FONT_HERSHEY_SIMPLEX
-    (tw, th), _ = cv2.getTextSize(info_text, font, 0.6, 2)
+    (tw, th), _ = cv2.getTextSize(info_text, font, 0.8, 2)
     
-    cv2.rectangle(frame, (5, 5), (tw + 15, th + 15), (0, 0, 0), -1)
-    cv2.putText(frame, info_text, (10, th + 8), font, 0.6, (0, 255, 0), 2)
+    # Draw thicker black background for better contrast
+    cv2.rectangle(frame, (5, 5), (tw + 20, th + 20), (0, 0, 0), -1)
+    # Gold color in BGR is (0, 215, 255)
+    cv2.putText(frame, info_text, (10, th + 10), font, 0.8, (0, 215, 255), 2)
     
     return frame
 
@@ -1077,11 +1180,40 @@ def reset_state():
     print("🔄 Detection state reset")
 
 
-def set_parking_zones(zones: List[Dict]):
-    """Update parking zones at runtime."""
     global parking_zones
     parking_zones = zones
+    save_zones_to_disk(zones)
     print(f"📍 Updated parking zones: {len(zones)} zones")
+
+def add_parking_zone(zone: Dict):
+    """Add a new parking zone and save."""
+    global parking_zones
+    # Check if exists
+    for z in parking_zones:
+        if z["id"] == zone["id"]:
+            return # Already exists
+    parking_zones.append(zone)
+    save_zones_to_disk(parking_zones)
+    print(f"📍 Added zone: {zone['id']}")
+
+def remove_parking_zone(zone_id: str) -> bool:
+    """Remove a parking zone and save."""
+    global parking_zones
+    initial_len = len(parking_zones)
+    parking_zones = [z for z in parking_zones if z["id"] != zone_id]
+    
+    if len(parking_zones) < initial_len:
+        save_zones_to_disk(parking_zones)
+        print(f"📍 Removed zone: {zone_id}")
+        return True
+    return False
+
+def reset_parking_zones():
+    """Clear all parking zones."""
+    global parking_zones
+    parking_zones = []
+    save_zones_to_disk(parking_zones)
+    print("📍 Reset all parking zones")
 
 
 def detect_plates(plate_model, frame, vehicle_detections, confidence=0.3):
