@@ -279,3 +279,4 @@ This project is for educational and demonstration purposes.
 <!-- Update output video resolution settings -->
 <!-- Update utility helper functions -->
 <!-- Improve error handling in video stream processing -->
+<!-- Fix issue with timestamp synchronization -->
