@@ -280,3 +280,4 @@ This project is for educational and demonstration purposes.
 <!-- Update utility helper functions -->
 <!-- Improve error handling in video stream processing -->
 <!-- Fix issue with timestamp synchronization -->
+<!-- Refactor directory structure for scalability -->
