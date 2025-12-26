@@ -136,3 +136,6 @@ async def reset_signal():
 async def compute_duration(vehicle_count: int = Query(..., ge=0, le=100)):
     """
     Compute the recommended green light duration for a given vehicle count.
+    This is a read-only endpoint that doesn't modify the signal state.
+    """
+    controller = FuzzyTrafficController()
