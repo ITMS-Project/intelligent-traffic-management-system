@@ -277,3 +277,4 @@ This project is for educational and demonstration purposes.
 <!-- Update project metadata and versioning -->
 <!-- Optimize CPU usage during idle times -->
 <!-- Update output video resolution settings -->
+<!-- Update utility helper functions -->
