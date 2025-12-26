@@ -278,3 +278,4 @@ This project is for educational and demonstration purposes.
 <!-- Optimize CPU usage during idle times -->
 <!-- Update output video resolution settings -->
 <!-- Update utility helper functions -->
+<!-- Improve error handling in video stream processing -->
