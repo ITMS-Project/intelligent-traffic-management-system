@@ -206,3 +206,7 @@ class TrafficSignal:
                 self.remaining_time = self.red_duration
         
         import time
+        self.last_update = time.time()
+    
+    def tick(self, elapsed_seconds: int = 1) -> bool:
+        """
