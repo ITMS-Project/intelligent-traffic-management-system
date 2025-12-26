@@ -202,3 +202,7 @@ class TrafficSignal:
                 self.remaining_time = self.green_duration
             elif state == 'yellow':
                 self.remaining_time = self.yellow_duration
+            else:
+                self.remaining_time = self.red_duration
+        
+        import time
