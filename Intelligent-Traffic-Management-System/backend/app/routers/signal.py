@@ -139,3 +139,6 @@ async def compute_duration(vehicle_count: int = Query(..., ge=0, le=100)):
     This is a read-only endpoint that doesn't modify the signal state.
     """
     controller = FuzzyTrafficController()
+    return controller.get_signal_recommendation(vehicle_count)
+
+
