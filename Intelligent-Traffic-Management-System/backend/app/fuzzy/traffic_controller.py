@@ -210,3 +210,7 @@ class TrafficSignal:
     
     def tick(self, elapsed_seconds: int = 1) -> bool:
         """
+        Advance the signal timer.
+        
+        Args:
+            elapsed_seconds: Time elapsed since last tick
