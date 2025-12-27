@@ -218,3 +218,7 @@ class TrafficSignal:
         Returns:
             True if state changed, False otherwise
         """
+        self.remaining_time -= elapsed_seconds
+        
+        if self.remaining_time <= 0:
+            # State transition
