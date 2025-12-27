@@ -214,3 +214,7 @@ class TrafficSignal:
         
         Args:
             elapsed_seconds: Time elapsed since last tick
+            
+        Returns:
+            True if state changed, False otherwise
+        """
