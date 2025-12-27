@@ -222,3 +222,7 @@ class TrafficSignal:
         
         if self.remaining_time <= 0:
             # State transition
+            if self.state == 'green':
+                self.set_state('yellow')
+            elif self.state == 'yellow':
+                self.set_state('red')
