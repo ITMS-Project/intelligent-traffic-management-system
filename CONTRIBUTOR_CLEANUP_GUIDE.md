@@ -1,11 +1,17 @@
 # How to Remove Unwanted Contributors from GitHub
 
+## QUICK START: Steps to Unlink Ranidu1999
+
+**If you just want the steps to unlink your Ranidu1999 account, jump to [Step 2: Detailed Instructions](#step-2-unlink-emails-from-ranidu1999-account-detailed-steps)**
+
+---
+
 ## Your Situation
 
 You have **3 contributors** showing on GitHub:
 1. **RP1999** ✅ (Your main account - KEEP)
-2. **Ranidu1999** ❌ (Your personal account - REMOVE)
-3. **chala-nii** ❌ (Unknown account - REMOVE)
+2. **Ranidu1999** ❌ (Your personal account - REMOVE from contributors)
+3. **chala-nii** ❌ (Chalani's account - contact her to unlink)
 
 ## Investigation Results
 
@@ -34,14 +40,49 @@ If these emails are linked to those GitHub accounts in their settings, GitHub sh
 2. Log in with your **RP1999** account
 3. Note which emails are linked
 
-### Step 2: Check Ranidu1999 Account
-1. Log out of RP1999
-2. Log in with your **Ranidu1999** account
-3. Go to: https://github.com/settings/emails
-4. **Remove these emails if present:**
+### Step 2: Unlink Emails from Ranidu1999 Account (DETAILED STEPS)
+
+**Follow these steps carefully:**
+
+1. **Log out of your current GitHub account (RP1999)**
+   - Click your profile picture in the top-right corner of GitHub
+   - Click "Sign out" at the bottom of the menu
+
+2. **Log in to your Ranidu1999 account**
+   - Go to https://github.com/login
+   - Enter your Ranidu1999 username and password
+   - Complete any 2FA if required
+
+3. **Navigate to Email Settings**
+   - Click your profile picture in the top-right corner
+   - Click "Settings" from the dropdown menu
+   - In the left sidebar, click "Emails"
+   - OR directly visit: https://github.com/settings/emails
+
+4. **Find and Remove the Problematic Emails**
+   
+   Look for these two email addresses in your email list:
    - `it22925572@my.sliit.lk`
    - `promoranidu@gmail.com`
-5. Save changes
+   
+   For EACH email you find:
+   - Look for a "Remove" or "Delete" button/link next to the email
+   - Click the "Remove" button
+   - Confirm the removal if prompted
+   
+   **Note:** If you don't see these emails listed, they're not linked to this account (which is good - nothing to do!)
+
+5. **Verify the Removal**
+   - Check that the emails are no longer listed on the page
+   - You should only see emails you want associated with Ranidu1999
+
+6. **Log out of Ranidu1999**
+   - Click your profile picture
+   - Click "Sign out"
+
+7. **Log back into your RP1999 account**
+   - Go to https://github.com/login
+   - Enter your RP1999 credentials
 
 ### Step 3: Check chala-nii Account (if you have access)
 1. If `chala-nii` is your account:
@@ -142,14 +183,23 @@ If after following these steps the contributors still show:
 
 ## Questions?
 
+- **Q: I logged into Ranidu1999 but don't see those emails. What now?**
+  - A: Great! That means they're not linked to that account. The contributor issue might resolve itself after 24-48 hours, or the emails might be linked elsewhere.
+
+- **Q: I see the emails in Ranidu1999 but can't find the Remove button?**
+  - A: Look for a "Delete" link or trash icon next to each email. If it's your primary email, you might need to make another email primary first before removing it.
+
+- **Q: How do I make another email primary in Ranidu1999?**
+  - A: In GitHub Settings → Emails, find another email in the list and click "Make primary" next to it. Then you can remove the old one.
+
 - **Q: Will this affect my commit history?**
   - A: No! Your git history is already perfect and won't change.
 
 - **Q: Will I lose any work?**
-  - A: No! You're just unlinking emails, not deleting anything.
+  - A: No! You're just unlinking emails from GitHub account settings, not deleting anything from the repository.
 
 - **Q: Do I need to update the `.mailmap`?**
-  - A: No! It's already correct and should be left as-is.
+  - A: No! It's already correct and should be left as-is (unless the email doesn't belong to you).
 
 - **Q: What if I can't access chala-nii account?**
-  - A: If no commits were made by them (which is confirmed), they shouldn't appear once GitHub syncs. If `hansikachalani875@gmail.com` is YOUR email, contact the chala-nii account owner to remove it from their settings. If it's NOT your email, you can remove the mapping from `.mailmap`. Wait 24-48 hours for GitHub to recalculate. If they still appear, contact GitHub support.
+  - A: If no commits were made by them (which is confirmed), they shouldn't appear once GitHub syncs. If `hansikachalani875@gmail.com` is YOUR email, contact the chala-nii account owner (Chalani) to remove it from their settings. If it's NOT your email, you can remove the mapping from `.mailmap`. Wait 24-48 hours for GitHub to recalculate. If they still appear, contact GitHub support.

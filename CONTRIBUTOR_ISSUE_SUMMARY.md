@@ -26,19 +26,26 @@ If these emails are linked to those GitHub accounts, GitHub will show them as co
 
 Read the detailed guide: **[CONTRIBUTOR_CLEANUP_GUIDE.md](./CONTRIBUTOR_CLEANUP_GUIDE.md)**
 
-### Quick Steps:
-1. **If you have access to Ranidu1999 account** (your personal account):
-   - Log in → Settings → Emails → Remove:
-     - `it22925572@my.sliit.lk`
-     - `promoranidu@gmail.com`
-   - ✅ **If you completed this step, great!**
+### Quick Steps for Ranidu1999:
 
-2. **About chala-nii account**:
-   - **If `hansikachalani875@gmail.com` is YOUR email**: Contact chala-nii account owner and ask them to remove this email from their GitHub settings
-   - **If `hansikachalani875@gmail.com` is NOT your email**: You can remove the lines mentioning this email from your `.mailmap` file (lines with "Chala-ni" or "hansikachalani875@gmail.com")
-   - **Either way**: Since no commits were made by chala-nii, they should disappear from contributors after GitHub syncs
+**DETAILED INSTRUCTIONS:** See [Step 2 in the full guide](./CONTRIBUTOR_CLEANUP_GUIDE.md#step-2-unlink-emails-from-ranidu1999-account-detailed-steps)
 
-3. Wait 24-48 hours for GitHub to recalculate contributors
+**Summary:**
+1. Log out of RP1999 account on GitHub
+2. Log in to your Ranidu1999 account
+3. Go to https://github.com/settings/emails
+4. Find and click "Remove" next to these emails:
+   - `it22925572@my.sliit.lk`
+   - `promoranidu@gmail.com`
+5. Confirm removal
+6. Log out and log back into RP1999
+
+### Quick Steps for chala-nii:
+- Contact Chalani and ask her to remove `hansikachalani875@gmail.com` from her chala-nii GitHub account email settings
+- She needs to go to https://github.com/settings/emails and remove that email
+
+### Then Wait:
+- Wait 24-48 hours for GitHub to recalculate contributors
 
 ## What NOT to Change
 
