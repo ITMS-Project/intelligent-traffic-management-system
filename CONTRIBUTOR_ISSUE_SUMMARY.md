@@ -27,12 +27,15 @@ If these emails are linked to those GitHub accounts, GitHub will show them as co
 Read the detailed guide: **[CONTRIBUTOR_CLEANUP_GUIDE.md](./CONTRIBUTOR_CLEANUP_GUIDE.md)**
 
 ### Quick Steps:
-1. Log into **Ranidu1999** account → Settings → Emails → Remove:
-   - `it22925572@my.sliit.lk`
-   - `promoranidu@gmail.com`
+1. **If you have access to Ranidu1999 account** (your personal account):
+   - Log in → Settings → Emails → Remove:
+     - `it22925572@my.sliit.lk`
+     - `promoranidu@gmail.com`
 
-2. Log into **chala-nii** account (if it's yours) → Settings → Emails → Remove:
-   - `hansikachalani875@gmail.com`
+2. **If you have access to chala-nii account**:
+   - Log in → Settings → Emails → Remove:
+     - `hansikachalani875@gmail.com`
+   - **If this is NOT your account**: Contact the account owner to unlink your email, or they should not appear as contributors since they made no commits
 
 3. Wait for GitHub to recalculate contributors (minutes to hours)
 

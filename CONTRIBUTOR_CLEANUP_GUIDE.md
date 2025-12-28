@@ -76,7 +76,8 @@ If you want to consolidate all your emails under RP1999:
 
 If `Ranidu1999` or `chala-nii` have push access to your repository:
 
-1. Go to: https://github.com/ITMS-Project/intelligent-traffic-management-system/settings/access
+1. Go to your repository Settings → Collaborators and teams
+   (URL format: `https://github.com/YOUR_USERNAME/YOUR_REPOSITORY/settings/access`)
 2. Remove any collaborators you don't want
 3. This prevents them from making future contributions
 
@@ -88,9 +89,9 @@ After making changes, verify your git history is still clean:
 # Check all contributors
 git shortlog -sne --all
 
-# Should show only:
-# 114  Gunarathna RP <163238777+RP1999@users.noreply.github.com>
-#   1  copilot-swe-agent[bot] <...>
+# Should show only entries for:
+# Gunarathna RP <163238777+RP1999@users.noreply.github.com>
+# (and possibly bot accounts like copilot-swe-agent[bot])
 ```
 
 ## What NOT to Do
