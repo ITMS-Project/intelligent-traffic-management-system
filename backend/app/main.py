@@ -85,13 +85,7 @@ if videos_dir.exists():
     app.mount("/videos", StaticFiles(directory=str(videos_dir)), name="videos")
 
 
-@app.get("/simulation", tags=["Simulation"])
-async def simulation_page():
-    """Serve the traffic signal simulation page."""
-    html_path = static_dir / "simulation.html"
-    if html_path.exists():
-        return FileResponse(str(html_path))
-    return {"error": "Simulation page not found"}
+
 
 
 @app.get("/detect", tags=["Detection"])

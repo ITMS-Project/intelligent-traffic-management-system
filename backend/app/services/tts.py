@@ -340,10 +340,11 @@ class TTSService:
                 )
             elif sys.platform == "darwin":
                 # macOS: Use afplay in background
+                # print(f"[DEBUG] Executing: afplay {filepath_str}")
                 subprocess.Popen(
                     ['afplay', filepath_str],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
+                    # stdout=subprocess.DEVNULL,  <-- Commented out to see errors
+                    # stderr=subprocess.DEVNULL   <-- Commented out
                 )
             else:
                 # Linux: Use mpg123 in quiet mode, background

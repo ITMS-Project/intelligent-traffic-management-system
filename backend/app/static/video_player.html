@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Detection - Live Vehicle & Plate Detection</title>
+    <title>Live Traffic Detection - Advanced UI</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,115 +16,379 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
-            color: #fff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
             min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .grid-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        }
+
+        .grid-line.horizontal {
+            width: 100%;
+            height: 1px;
+            left: 0;
+            animation: scanlineMove 8s linear infinite;
+        }
+
+        .grid-line.vertical {
+            height: 100%;
+            width: 1px;
+            top: 0;
+            animation: scanlineVertical 10s linear infinite;
+        }
+
+        @keyframes scanlineMove {
+            0% {
+                top: 0%;
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes scanlineVertical {
+            0% {
+                left: 0%;
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                left: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* Particle System */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #FFD700;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1920px;
+            margin: 0 auto;
             padding: 20px;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
+        /* Header */
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-icon {
+            font-size: 60px;
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
+            /* Shift orange to gold using hue-rotate and boost brightness */
+            filter: hue-rotate(18deg) brightness(1.2) drop-shadow(0 0 20px #FFD700);
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-10px) scale(1.1);
+            }
         }
 
         h1 {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #00ff88, #00ccff);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: 4px;
+            margin: 20px 0 10px 0;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite, glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes shimmer {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+            }
+
+            to {
+                filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
+            }
         }
 
         .subtitle {
-            font-size: 0.9em;
-            color: #00ff88;
+            font-size: 16px;
+            letter-spacing: 3px;
+            color: #888;
+            font-weight: 300;
+            text-transform: uppercase;
+            animation: fadeIn 1s ease-out 0.3s both;
         }
 
-        .content {
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Main Grid Layout */
+        .main-grid {
             display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 20px;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
         }
 
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Video Section */
         .video-section {
-            background: #262632;
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border-radius: 24px;
+            padding: 35px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: scaleIn 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .video-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .video-section:hover {
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2);
+            transform: translateY(-5px);
         }
 
         .video-container {
             position: relative;
-            width: 100%;
             background: #000;
-            min-height: 400px;
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            box-shadow: inset 0 0 40px rgba(255, 215, 0, 0.1);
         }
 
-        .video-container img {
-            max-width: 100%;
-            max-height: 70vh;
-            display: block;
-        }
-
-        .video-container .placeholder {
+        .video-placeholder {
             text-align: center;
-            color: #666;
-            padding: 40px;
+            z-index: 1;
         }
 
-        .video-container .placeholder h3 {
-            color: #00ff88;
-            margin-bottom: 15px;
-        }
-
-        .video-info {
-            padding: 20px;
-            background: #1a1a24;
-            border-top: 1px solid rgba(0, 255, 136, 0.2);
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-        }
-
-        .info-label {
-            color: #00ff88;
-            font-weight: 600;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .status-indicator.active {
-            background: #00ff88;
-            box-shadow: 0 0 10px #00ff88;
-            animation: pulse 1.5s infinite;
-        }
-
-        .status-indicator.inactive {
-            background: #ff6464;
+        .video-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
         }
 
         @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        .video-placeholder h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            color: #FFD700;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .video-placeholder p {
+            color: #888;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .video-info {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .info-item {
+            background: rgba(255, 215, 0, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .info-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #FFD700;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        .status-dot.active {
+            background: #10b981;
+        }
+
+        @keyframes blink {
 
             0%,
             100% {
@@ -129,263 +396,831 @@
             }
 
             50% {
-                opacity: 0.5;
+                opacity: 0.3;
             }
         }
 
+        /* Sidebar */
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 25px;
         }
 
-        .panel {
-            background: #262632;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(0, 255, 136, 0.2);
+        .card {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .panel-title {
-            font-size: 1.1em;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #00ff88;
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.5s ease;
         }
 
+        .card:hover::after {
+            left: 100%;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Detection Legend */
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            font-size: 0.9em;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .legend-box {
+        .legend-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .legend-color {
             width: 20px;
             height: 20px;
-            border: 2px solid;
-            border-radius: 2px;
+            border-radius: 6px;
+            position: relative;
         }
 
-        .vehicle-box {
-            border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
+        .legend-color::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: inherit;
+            filter: brightness(1.5);
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
 
-        .plate-box {
-            border-color: #00ccff;
-            background: rgba(0, 204, 255, 0.1);
+        @keyframes ping {
+
+            75%,
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
         }
 
-        .controls {
+        .legend-color.green {
+            background: #10b981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .legend-color.cyan {
+            background: #06b6d4;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+        }
+
+        .legend-text {
+            flex: 1;
+        }
+
+        .legend-label {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .legend-desc {
+            font-size: 11px;
+            color: #888;
+        }
+
+        /* Stream Controls */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             gap: 10px;
         }
 
-        button {
-            padding: 12px 20px;
-            background: linear-gradient(45deg, #00ff88, #00ccff);
-            border: none;
-            border-radius: 8px;
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
             color: #000;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.95em;
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            margin-bottom: 15px;
         }
 
-        button:hover {
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.6);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.3);
         }
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .reset-message {
+            text-align: center;
+            padding: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            color: #10b981;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 15px;
+            animation: fadeIn 0.5s ease;
         }
 
-        button.stop-btn {
-            background: linear-gradient(45deg, #ff6464, #ff8888);
+        /* Model Info */
+        .model-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        @media (max-width: 1024px) {
-            .content {
+        .model-item:last-child {
+            border-bottom: none;
+        }
+
+        .model-label {
+            font-size: 13px;
+            color: #888;
+            font-weight: 500;
+        }
+
+        .model-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #FFD700);
+            width: 85%;
+            border-radius: 3px;
+            animation: fillBar 1.5s ease-out;
+        }
+
+        @keyframes fillBar {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 85%;
+            }
+        }
+
+        /* Quick Links */
+        .link-btn {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .link-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateX(5px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                grid-template-columns: repeat(2, 1fr);
+                display: grid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .video-info {
                 grid-template-columns: 1fr;
             }
         }
 
-        .error-msg {
-            color: #ff6464;
-            padding: 10px;
-            background: rgba(255, 100, 100, 0.1);
-            border-radius: 4px;
-            margin-top: 10px;
-            font-size: 0.85em;
+        /* Loading Animation */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 215, 0, 0.2);
+            border-top-color: #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
 
-        .success-msg {
-            color: #00ff88;
-            padding: 10px;
-            background: rgba(0, 255, 136, 0.1);
-            border-radius: 4px;
-            margin-top: 10px;
-            font-size: 0.85em;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Corner Decorations */
+        .corner-decoration {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .corner-decoration.top-left {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+            border-top-left-radius: 24px;
+        }
+
+        .corner-decoration.top-right {
+            top: -1px;
+            right: -1px;
+            border-left: none;
+            border-bottom: none;
+            border-top-right-radius: 24px;
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: -1px;
+            left: -1px;
+            border-right: none;
+            border-top: none;
+            border-bottom-left-radius: 24px;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+            border-bottom-right-radius: 24px;
         }
     </style>
 </head>
 
 <body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="grid-line horizontal" style="animation-delay: 0s;"></div>
+        <div class="grid-line horizontal" style="animation-delay: 2s;"></div>
+        <div class="grid-line horizontal" style="animation-delay: 4s;"></div>
+        <div class="grid-line vertical" style="animation-delay: 1s;"></div>
+        <div class="grid-line vertical" style="animation-delay: 3s;"></div>
+    </div>
+
     <div class="container">
+        <!-- Header -->
         <header>
-            <h1>🚗 Live Traffic Detection</h1>
-            <p class="subtitle">Real-time YOLOv8 Vehicle & License Plate Detection</p>
+            <img src="/static/system_logo.png" class="header-icon" alt="System Logo"
+                style="width: 120px; height: 120px; object-fit: contain;">
+            <h1>LIVE TRAFFIC DETECTION</h1>
+            <p class="subtitle">Real-Time YOLOv8 Vehicle & License Plate Detection</p>
         </header>
 
-        <div class="content">
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Video Section -->
             <div class="video-section">
+                <div class="corner-decoration top-left"></div>
+                <div class="corner-decoration top-right"></div>
+                <div class="corner-decoration bottom-left"></div>
+                <div class="corner-decoration bottom-right"></div>
+
                 <div class="video-container" id="videoContainer">
-                    <div class="placeholder" id="placeholder">
-                        <h3>📹 Video Stream</h3>
-                        <p>Click "Start Stream" to begin live detection</p>
-                        <p style="margin-top: 10px; font-size: 0.85em; color: #888;">
-                            Uses traffic_sample.mp4 with dual-model detection
-                        </p>
+                    <div class="video-placeholder" id="placeholder">
+                        <div class="video-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m22 8-6 4 6 4V8Z" />
+                                <rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
+                            </svg></div>
+                        <h3>Video Stream</h3>
+                        <p>Click "Start Stream" to begin live detection<br>
+                            Uses traffic_sample.mp4 with dual-model detection</p>
                     </div>
-                    <img id="streamImg" style="display: none;" alt="Live Detection Stream">
+                    <!-- FUNCTIONAL ELEMENTS RESTORED -->
+                    <div id="videoWrapper" style="position: relative; display: none; width:100%; height:100%;">
+                        <img id="streamImg" style="display: none; width:100%; height:auto; max-height:80vh;"
+                            alt="Stream">
+                        <canvas id="overlayCanvas"
+                            style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10;"></canvas>
+                    </div>
                 </div>
+
                 <div class="video-info">
-                    <div class="info-row">
-                        <span class="info-label">📹 Source:</span>
-                        <span>traffic_sample.mp4</span>
+                    <div class="info-item">
+                        <div class="info-label">📁 Source</div>
+                        <div class="info-value">traffic_sample.mp4</div>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">🔄 Status:</span>
-                        <span id="streamStatus">
-                            <span class="status-indicator inactive"></span>
+                    <div class="info-item">
+                        <div class="info-label">⚡ Status</div>
+                        <div class="info-value" id="streamStatus">
+                            <span class="status-dot"></span>
                             Stopped
-                        </span>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">⏱️ Frame Skip:</span>
-                        <span>2 (for performance)</span>
+                    <div class="info-item">
+                        <div class="info-label">⏩ Frame Skip</div>
+                        <div class="info-value">2 (for performance)</div>
                     </div>
                 </div>
             </div>
 
+            <!-- Sidebar -->
             <div class="sidebar">
-                <div class="panel">
-                    <div class="panel-title">📋 Detection Legend</div>
-                    <div class="legend-item">
-                        <div class="legend-box vehicle-box"></div>
-                        <span>Vehicle Detection (Green)</span>
+                <!-- Detection Legend -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" x2="12" y1="20" y2="10" />
+                                <line x1="18" x2="18" y1="20" y2="4" />
+                                <line x1="6" x2="6" y1="20" y2="16" />
+                            </svg></div>
+                        <h3 class="card-title">Detection Legend</h3>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-box plate-box"></div>
-                        <span>License Plate (Cyan)</span>
+                        <div class="legend-color green"></div>
+                        <div class="legend-text">
+                            <div class="legend-label">Vehicle Detection (Green)</div>
+                        </div>
                     </div>
-                    <p style="font-size: 0.8em; color: #888; margin-top: 10px;">
-                        Vehicles with plates show "[Plate Detected]" in label
-                    </p>
+                    <div class="legend-item">
+                        <div class="legend-color cyan"></div>
+                        <div class="legend-text">
+                            <div class="legend-label">License Plate (Cyan)</div>
+                            <div class="legend-desc">Vehicles with plates show "[Plate Detected]" in label</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="panel">
-                    <div class="panel-title">⚙️ Stream Controls</div>
-                    <div class="controls">
-                        <button id="startBtn" onclick="startStream()">▶ Start Stream</button>
-                        <button id="stopBtn" class="stop-btn" onclick="stopStream()" disabled>⏹ Stop Stream</button>
+                <!-- Stream Controls -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg></div>
+                        <h3 class="card-title">Stream Controls</h3>
                     </div>
-                    <div id="msgBox"></div>
+                    <button id="startBtn" class="btn btn-primary" onclick="startStream()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="margin-right: 8px;">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg> Start Stream
+                    </button>
+                    <button id="stopBtn" class="btn btn-secondary" onclick="stopStream()" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="margin-right: 8px;">
+                            <rect x="6" y="4" width="4" height="16" />
+                            <rect x="14" y="4" width="4" height="16" />
+                        </svg> Stop Stream
+                    </button>
+                    <div id="msgBox" class="reset-message" style="display:none; transition: opacity 0.3s; opacity:0;">
+                    </div>
                 </div>
 
-                <div class="panel">
-                    <div class="panel-title">ℹ️ Model Info</div>
-                    <p style="font-size: 0.85em; line-height: 1.6; color: #ccc;">
-                        <strong>Vehicle Model:</strong> yolov8n.pt<br>
-                        <strong>Plate Model:</strong> best_plate.pt (custom)<br>
-                        <strong>Confidence:</strong> 0.5+<br>
-                        <strong>Processing:</strong> CPU
-                    </p>
+                <!-- Model Info -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                <line x1="12" y1="22.08" x2="12" y2="12" />
+                            </svg></div>
+                        <h3 class="card-title">Model Info</h3>
+                    </div>
+                    <div class="model-item">
+                        <span class="model-label">Vehicle Model:</span>
+                        <span class="model-value">yolov8n.pt</span>
+                    </div>
+                    <div class="model-item">
+                        <span class="model-label">Plate Model:</span>
+                        <span class="model-value">best_plate.pt (custom)</span>
+                    </div>
+                    <div class="model-item">
+                        <span class="model-label">Confidence:</span>
+                        <span class="model-value">0.5+</span>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill"></div>
+                    </div>
+                    <div class="model-item">
+                        <span class="model-label">Processing:</span>
+                        <span class="model-value">CPU</span>
+                    </div>
                 </div>
 
-                <div class="panel">
-                    <div class="panel-title">🔗 Quick Links</div>
-                    <div class="controls">
-
-                        <button onclick="window.open('/docs', '_blank')" style="font-size: 0.85em;">
-                            📚 API Documentation
-                        </button>
+                <!-- Quick Links -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                            </svg></div>
+                        <h3 class="card-title">Quick Actions</h3>
                     </div>
+                    <button id="drawBtn" class="link-btn" onclick="toggleDrawingMode()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="margin-right: 8px;">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg> Add No Parking Zone
+                    </button>
+                    <button class="link-btn" onclick="resetZones()"
+                        style="margin-top: 10px; color: #ef4444; border-color: rgba(239,68,68,0.3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="margin-right: 8px;">
+                            <path
+                                d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                        </svg> Reset All Zones
+                    </button>
+                    <button class="link-btn" onclick="window.open('/docs', '_blank')" style="margin-top: 10px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="margin-right: 8px;">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                        </svg> API Docs
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Particle System & Logic -->
     <script>
+        // Create animated particles
+        function createParticles() {
+            const bg = document.querySelector('.animated-bg');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                bg.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Card hover effects
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // ==========================================
+        // RESTORED FUNCTIONAL LOGIC
+        // ==========================================
+
         const streamImg = document.getElementById('streamImg');
+        const videoWrapper = document.getElementById('videoWrapper');
         const placeholder = document.getElementById('placeholder');
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
         const streamStatus = document.getElementById('streamStatus');
         const msgBox = document.getElementById('msgBox');
+        const drawBtn = document.getElementById('drawBtn');
+
+        const canvas = document.getElementById('overlayCanvas');
+        const ctx = canvas.getContext('2d');
 
         let isStreaming = false;
+        let isDrawingMode = false;
+        let isDrawing = false;
+        let startLogicalX, startLogicalY;
+        let drawStartX, drawStartY;
 
-        function startStream() {
-            // Use the MJPEG stream endpoint with plate detection enabled
-            // Sprint G: Using Sri Lankan traffic video with two-stage "Zoom" detection
-            const streamUrl = '/video/stream?detect_plates=true&skip=2&source=D:/Intelligent-Traffic-Management-System/data/videos/SriLankan_Traffic_Video.mp4';
+        function showMessage(msg, type = 'neutral') {
+            msgBox.style.display = 'block';
+            setTimeout(() => { msgBox.style.opacity = '1'; }, 10);
 
-            streamImg.src = streamUrl;
-            streamImg.style.display = 'block';
-            placeholder.style.display = 'none';
+            if (type === 'error') {
+                msgBox.style.color = '#ef4444';
+                msgBox.style.borderColor = '#ef4444';
+                msgBox.style.background = 'rgba(239, 68, 68, 0.1)';
+                msgBox.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' + msg;
+            } else if (type === 'success') {
+                msgBox.style.color = '#10b981';
+                msgBox.style.borderColor = '#10b981';
+                msgBox.style.background = 'rgba(16, 185, 129, 0.1)';
+                msgBox.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><polyline points="20 6 9 17 4 12"/></svg>' + msg;
+            } else {
+                msgBox.innerHTML = msg;
+            }
 
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            isStreaming = true;
+            // Auto fade out
+            setTimeout(() => {
+                msgBox.style.opacity = '0';
+                setTimeout(() => { msgBox.style.display = 'none'; }, 300);
+            }, 4000);
+        }
 
-            streamStatus.innerHTML = '<span class="status-indicator active"></span> Streaming...';
-            msgBox.innerHTML = '<div class="success-msg">🎬 Stream started! Processing frames...</div>';
+        function resizeCanvas() {
+            if (streamImg.width > 0 && streamImg.height > 0) {
+                canvas.width = streamImg.width;
+                canvas.height = streamImg.height;
+                canvas.style.width = streamImg.width + "px";
+                canvas.style.height = streamImg.height + "px";
+            }
+        }
 
-            // Handle image load error - only trigger once
-            streamImg.onerror = function () {
-                if (isStreaming) {
-                    msgBox.innerHTML = '<div class="error-msg">⚠️ Stream error. Check server logs.</div>';
-                    // Don't auto-stop to prevent loops
-                }
+        window.toggleDrawingMode = function () {
+            if (!isStreaming) {
+                showMessage('Please start the video stream first.', 'error');
+                return;
+            }
+
+            isDrawingMode = !isDrawingMode;
+
+            if (isDrawingMode) {
+                resizeCanvas();
+                canvas.style.pointerEvents = 'auto';
+                canvas.style.border = '2px dashed #FFD700';
+                drawBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Cancel Drawing';
+                drawBtn.style.color = '#ef4444';
+                drawBtn.style.borderColor = '#ef4444';
+                showMessage('Drawing Mode Active. Drag to mark zone.', 'success');
+            } else {
+                canvas.style.pointerEvents = 'none';
+                canvas.style.border = 'none';
+                drawBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add No Parking Zone';
+                drawBtn.style.color = '';
+                drawBtn.style.borderColor = '';
+                showMessage('Drawing mode exited.');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        };
+
+        // --- Coordinate Helpers ---
+
+        function getImgCoordinates(e) {
+            const rect = streamImg.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return { x: 0, y: 0 };
+            let x = (e.clientX - rect.left);
+            let y = (e.clientY - rect.top);
+            let normX = Math.max(0.0, Math.min(x / rect.width, 1.0));
+            let normY = Math.max(0.0, Math.min(y / rect.height, 1.0));
+            return { x: normX, y: normY };
+        }
+
+        function getCanvasCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
             };
         }
 
-        function stopStream() {
-            if (!isStreaming) return;  // Prevent multiple calls
+        canvas.addEventListener('mousedown', (e) => {
+            if (!isDrawingMode) return;
+            const visual = getCanvasCoordinates(e);
+            drawStartX = visual.x;
+            drawStartY = visual.y;
+            const logical = getImgCoordinates(e);
+            startLogicalX = logical.x;
+            startLogicalY = logical.y;
+            isDrawing = true;
+        });
 
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing || !isDrawingMode) return;
+            const visual = getCanvasCoordinates(e);
+            const w = visual.x - drawStartX;
+            const h = visual.y - drawStartY;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(drawStartX, drawStartY, w, h);
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
+            ctx.fillRect(drawStartX, drawStartY, w, h);
+        });
+
+        canvas.addEventListener('mouseup', async (e) => {
+            if (!isDrawing || !isDrawingMode) return;
+            isDrawing = false;
+            const logical = getImgCoordinates(e);
+            const endX = logical.x;
+            const endY = logical.y;
+            const x = Math.min(startLogicalX, endX);
+            const y = Math.min(startLogicalY, endY);
+            const w = Math.abs(endX - startLogicalX);
+            const h = Math.abs(endY - startLogicalY);
+
+            if (w < 0.02 || h < 0.02) {
+                showMessage('Zone too small.', 'error');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            const polygon = [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+
+            try {
+                const zoneId = 'zone_' + Date.now();
+                showMessage('Saving zone...', 'neutral');
+                const resp = await fetch('/parking/zones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        zone_id: zoneId,
+                        name: "Zone " + zoneId.substr(-4),
+                        polygon: polygon,
+                        color: [0, 0, 255]
+                    })
+                });
+
+                if (resp.ok) {
+                    showMessage('Zone Saved Successfully!', 'success');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    toggleDrawingMode();
+                } else {
+                    showMessage('Failed to save', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showMessage('Network Error', 'error');
+            }
+        });
+
+        window.startStream = function () {
+            const streamUrl = '/video/stream?detect_plates=true&skip=2&source=D:/Intelligent-Traffic-Management-System/data/videos/SriLankan_Traffic_Video.mp4';
+            streamImg.src = streamUrl;
+            videoWrapper.style.display = 'block';
+            streamImg.style.display = 'block'; /* Ensure img is block too */
+            placeholder.style.display = 'none';
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            isStreaming = true;
+            streamImg.onload = function () { resizeCanvas(); };
+
+            streamStatus.innerHTML = '<span class="status-dot active"></span> LIVE';
+            showMessage('Stream started! Processing frames...', 'success');
+
+            streamImg.onerror = function () {
+                if (isStreaming) showMessage('Stream error. Check server logs.', 'error');
+            };
+        };
+
+        window.stopStream = function () {
+            if (!isStreaming) return;
             streamImg.src = '';
             streamImg.style.display = 'none';
+            videoWrapper.style.display = 'none';
             placeholder.style.display = 'block';
-
+            if (isDrawingMode) toggleDrawingMode();
             startBtn.disabled = false;
             stopBtn.disabled = true;
             isStreaming = false;
-
-            streamStatus.innerHTML = '<span class="status-indicator inactive"></span> Stopped';
-            msgBox.innerHTML = '';
-
-            // Call server to stop stream (single call)
+            streamStatus.innerHTML = '<span class="status-dot"></span> Stopped';
+            showMessage('Stream Stopped');
             fetch('/video/stop', { method: 'POST' }).catch(() => { });
-        }
+        };
 
-        // Check if server is running on load
+        window.resetZones = async function () {
+            if (!confirm("Remove ALL no parking zones?")) return;
+            try {
+                const resp = await fetch('/parking/zones', { method: 'DELETE' });
+                if (resp.ok) showMessage('All zones reset.', 'success');
+                else showMessage('Failed to reset.', 'error');
+            } catch (err) {
+                showMessage('Network error during reset.', 'error');
+            }
+        };
+
+        // Initial Server Check
         fetch('/health')
             .then(r => r.json())
-            .then(data => {
-                msgBox.innerHTML = '<div class="success-msg">✅ Server connected. Ready to stream.</div>';
-                setTimeout(() => { msgBox.innerHTML = ''; }, 3000);
-            })
-            .catch(() => {
-                msgBox.innerHTML = '<div class="error-msg">⚠️ Server not responding. Start the backend first.</div>';
-            });
+            .then(data => { showMessage('System Online. Ready.', 'success'); })
+            .catch(() => { showMessage('Backend Offline.', 'error'); });
     </script>
 </body>
 

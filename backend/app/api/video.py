@@ -23,11 +23,12 @@ from app.services.detection import (
     load_plate_model,
     detect_and_track,
     draw_detections,
+    draw_parking_zones,
     draw_frame_info,
     FrameResult,
     VEHICLE_CLASSES,
 )
-from app.api.parking import get_detector  # import parking detector to overlay zones
+# from app.api.parking import get_detector  # Removed legacy dependency
 
 settings = get_settings()
 router = APIRouter(prefix="/video", tags=["Video"])
@@ -148,14 +149,11 @@ async def generate_mjpeg_frames(
                     _pipeline_state["plates_detected"] += len(result.plate_boxes)
                     _pipeline_state["last_frame_time"] = time.time()
                     
-                    # Draw parking zones overlay (if available)
-                    # Skip parking zones for now to avoid blocking
-                    # try:
-                    #     parking_detector = await get_detector()
-                    #     if parking_detector:
-                    #         frame = parking_detector.draw_zones(frame)
-                    # except Exception:
-                    #     pass
+                    # Draw parking zones overlay
+                    try:
+                        frame = draw_parking_zones(frame)
+                    except Exception as e:
+                        print(f"Error drawing zones: {e}")
 
                     # Draw detections using new visualization API
                     frame = draw_detections(frame, result)
