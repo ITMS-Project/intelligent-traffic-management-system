@@ -51,10 +51,17 @@ If these emails are linked to those GitHub accounts in their settings, GitHub sh
      - `hansikachalani875@gmail.com`
    - Save changes
 
-2. If `chala-nii` is NOT your account:
-   - This person should not be a contributor (no commits from them)
-   - They might have accidentally pushed something, or have one of your emails linked
-   - Contact them to unlink your email if they have it
+2. **If `chala-nii` is NOT your account:**
+   - **Good news**: Since no commits were made with their account, they should NOT appear as contributors
+   - If they still appear, it's likely because:
+     - They have `hansikachalani875@gmail.com` linked to their GitHub account in their settings
+     - GitHub is incorrectly associating them due to email overlap
+   - **What you can do:**
+     - Check if `hansikachalani875@gmail.com` is YOUR email address
+     - If YES: Contact the `chala-nii` account owner and ask them to remove `hansikachalani875@gmail.com` from their GitHub email settings
+     - If NO: This email doesn't belong to you, so you can remove the mapping from your `.mailmap` file
+     - Wait 24-48 hours after any email changes for GitHub to recalculate contributors
+     - If they persist after 48 hours with no email links, contact GitHub Support to report the issue
 
 ### Step 4: Optionally Add Emails to RP1999
 If you want to consolidate all your emails under RP1999:
@@ -100,7 +107,7 @@ git shortlog -sne --all
 ❌ **Don't rewrite git history** - your commits are already correct
 ❌ **Don't transfer the repository** - unnecessary since git history is clean
 
-## Why Your .mailmap is Perfect
+## Why Your .mailmap is Perfect (Or May Need Adjustment)
 
 Your current `.mailmap` file:
 ```
@@ -114,7 +121,9 @@ Gunarathna RP <163238777+RP1999@users.noreply.github.com> Ranidu Pramod <promora
 
 This ensures that IF any future commits are made with those emails or names, they'll be attributed to your canonical identity (RP1999).
 
-**Keep this file as-is!** ✅
+**Keep this file as-is IF** all these emails belong to you. ✅
+
+**Remove lines related to `hansikachalani875@gmail.com` IF** this email does NOT belong to you and was added by mistake. This would be lines mentioning "Chala-ni" or "hansikachalani875@gmail.com".
 
 ## Summary
 
@@ -143,4 +152,4 @@ If after following these steps the contributors still show:
   - A: No! It's already correct and should be left as-is.
 
 - **Q: What if I can't access chala-nii account?**
-  - A: If no commits were made by them (which is true), they shouldn't appear after GitHub syncs. If they persist, contact GitHub support.
+  - A: If no commits were made by them (which is confirmed), they shouldn't appear once GitHub syncs. If `hansikachalani875@gmail.com` is YOUR email, contact the chala-nii account owner to remove it from their settings. If it's NOT your email, you can remove the mapping from `.mailmap`. Wait 24-48 hours for GitHub to recalculate. If they still appear, contact GitHub support.

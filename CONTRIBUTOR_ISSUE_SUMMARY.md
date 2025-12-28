@@ -31,13 +31,14 @@ Read the detailed guide: **[CONTRIBUTOR_CLEANUP_GUIDE.md](./CONTRIBUTOR_CLEANUP_
    - Log in → Settings → Emails → Remove:
      - `it22925572@my.sliit.lk`
      - `promoranidu@gmail.com`
+   - ✅ **If you completed this step, great!**
 
-2. **If you have access to chala-nii account**:
-   - Log in → Settings → Emails → Remove:
-     - `hansikachalani875@gmail.com`
-   - **If this is NOT your account**: Contact the account owner to unlink your email, or they should not appear as contributors since they made no commits
+2. **About chala-nii account**:
+   - **If `hansikachalani875@gmail.com` is YOUR email**: Contact chala-nii account owner and ask them to remove this email from their GitHub settings
+   - **If `hansikachalani875@gmail.com` is NOT your email**: You can remove the lines mentioning this email from your `.mailmap` file (lines with "Chala-ni" or "hansikachalani875@gmail.com")
+   - **Either way**: Since no commits were made by chala-nii, they should disappear from contributors after GitHub syncs
 
-3. Wait for GitHub to recalculate contributors (minutes to hours)
+3. Wait 24-48 hours for GitHub to recalculate contributors
 
 ## What NOT to Change
 
