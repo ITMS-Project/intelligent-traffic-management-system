@@ -145,3 +145,6 @@ async def compute_duration(vehicle_count: int = Query(..., ge=0, le=100)):
 @router.get("/fuzzy-status", summary="Check fuzzy system status")
 async def fuzzy_status():
     """Check if scikit-fuzzy is available and the fuzzy system is working."""
+    return {
+        "fuzzy_available": FUZZY_AVAILABLE,
+        "message": "Fuzzy inference system is ready" if FUZZY_AVAILABLE else "Running in fallback mode (linear interpolation)",
