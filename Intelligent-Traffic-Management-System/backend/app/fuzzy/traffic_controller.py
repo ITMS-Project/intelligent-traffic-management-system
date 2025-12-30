@@ -226,3 +226,7 @@ class TrafficSignal:
                 self.set_state('yellow')
             elif self.state == 'yellow':
                 self.set_state('red')
+            else:  # red
+                self.set_state('green')
+            return True
+        
