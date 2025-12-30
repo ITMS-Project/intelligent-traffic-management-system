@@ -234,3 +234,7 @@ class TrafficSignal:
     
     def get_status(self) -> dict:
         """Get current signal status."""
+        return {
+            "signal_id": self.signal_id,
+            "state": self.state,
+            "remaining_time": self.remaining_time,
