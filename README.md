@@ -286,3 +286,4 @@ This project is for educational and demonstration purposes.
 <!-- Refactor parking duration calculation logic -->
 <!-- Optimize variable naming for readability -->
 <!-- Add retry mechanism for database writes -->
+<!-- Fix memory leak in frame buffer -->
