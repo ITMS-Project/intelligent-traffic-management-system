@@ -230,3 +230,7 @@ class TrafficSignal:
                 self.set_state('green')
             return True
         
+        return False
+    
+    def get_status(self) -> dict:
+        """Get current signal status."""
