@@ -295,3 +295,4 @@ This project is for educational and demonstration purposes.
 <!-- Update detection region of interest coordinates -->
 <!-- Fix minor typo in code comments -->
 <!-- Enhance dashboard load time efficiency -->
+<!-- Fix css styling issues on dashboard -->
