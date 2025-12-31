@@ -288,3 +288,4 @@ This project is for educational and demonstration purposes.
 <!-- Add retry mechanism for database writes -->
 <!-- Fix memory leak in frame buffer -->
 <!-- Update environment variable parsing -->
+<!-- Clean up logging statements in detection service -->
