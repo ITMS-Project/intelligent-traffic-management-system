@@ -291,3 +291,4 @@ This project is for educational and demonstration purposes.
 <!-- Clean up logging statements in detection service -->
 <!-- Update frontend static asset paths -->
 <!-- Handle edge case where vehicle stays stationary -->
+<!-- Optimize image processing pipeline speed -->
