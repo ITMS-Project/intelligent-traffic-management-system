@@ -292,3 +292,4 @@ This project is for educational and demonstration purposes.
 <!-- Update frontend static asset paths -->
 <!-- Handle edge case where vehicle stays stationary -->
 <!-- Optimize image processing pipeline speed -->
+<!-- Update detection region of interest coordinates -->
