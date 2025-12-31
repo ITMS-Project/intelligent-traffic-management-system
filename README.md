@@ -289,3 +289,4 @@ This project is for educational and demonstration purposes.
 <!-- Fix memory leak in frame buffer -->
 <!-- Update environment variable parsing -->
 <!-- Clean up logging statements in detection service -->
+<!-- Update frontend static asset paths -->
