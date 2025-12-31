@@ -290,3 +290,4 @@ This project is for educational and demonstration purposes.
 <!-- Update environment variable parsing -->
 <!-- Clean up logging statements in detection service -->
 <!-- Update frontend static asset paths -->
+<!-- Handle edge case where vehicle stays stationary -->
