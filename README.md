@@ -293,3 +293,4 @@ This project is for educational and demonstration purposes.
 <!-- Handle edge case where vehicle stays stationary -->
 <!-- Optimize image processing pipeline speed -->
 <!-- Update detection region of interest coordinates -->
+<!-- Fix minor typo in code comments -->
