@@ -296,3 +296,4 @@ This project is for educational and demonstration purposes.
 <!-- Fix minor typo in code comments -->
 <!-- Enhance dashboard load time efficiency -->
 <!-- Fix css styling issues on dashboard -->
+<!-- Adjust fuzzy logic parameters for signal control -->
