@@ -300,3 +300,4 @@ This project is for educational and demonstration purposes.
 <!-- Improve text-to-speech warning clarity -->
 <!-- Improve exception handling in main loop -->
 <!-- Update dependent library versions in requirements -->
+<!-- Refactor alert generation logic -->
