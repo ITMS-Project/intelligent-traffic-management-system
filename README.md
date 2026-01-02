@@ -298,3 +298,4 @@ This project is for educational and demonstration purposes.
 <!-- Fix css styling issues on dashboard -->
 <!-- Adjust fuzzy logic parameters for signal control -->
 <!-- Improve text-to-speech warning clarity -->
+<!-- Improve exception handling in main loop -->
