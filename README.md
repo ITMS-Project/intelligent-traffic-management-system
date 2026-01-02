@@ -297,3 +297,4 @@ This project is for educational and demonstration purposes.
 <!-- Enhance dashboard load time efficiency -->
 <!-- Fix css styling issues on dashboard -->
 <!-- Adjust fuzzy logic parameters for signal control -->
+<!-- Improve text-to-speech warning clarity -->
