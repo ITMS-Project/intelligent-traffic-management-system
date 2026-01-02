@@ -1,303 +1,346 @@
-# Intelligent Traffic Management System
+# Intelligent Traffic Management System for Sri Lanka
 
-A specialized AI-powered system designed to detect parking violations, read license plates, and manage driver scores using computer vision.
+An intelligent system using Machine Learning and Fuzzy Logic to improve traffic flow and safety in Sri Lankan cities.
 
-![System Architecture](https://img.shields.io/badge/Architecture-FastAPI%20%7C%20YOLOv8%20%7C%20EasyOCR-blue)
-![Python](https://img.shields.io/badge/Python-3.11-green)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-## � System Capabilities
+---
 
-*   **🚗 Vehicle Detection & Tracking**: Real-time YOLOv8 tracking of cars, trucks, and buses.
-*   **🅿️ Parking Violation Detection**: Automatically identifies vehicles parked in restricted red zones (Warning @ 5s, Violation @ 15s).
-*   **🔍 License Plate Recognition (ALPR)**: Custom-trained model to detect and read license plates.
-*   **📊 Driver Scoring**: Tracks violations per vehicle and maintains a 100-point driver score system.
-*   **🔊 Audio Warnings**: Automated voice alerts for violators (TTS).
-*   **📄 Evidence Capture**: Logs violations and captures evidence in a local database.
+## 📑 Table of Contents
 
-## 🏗️ Project Structure
+- [Project Overview](#project-overview)
+- [System Architecture](#system-architecture)
+- [Team Contributions](#team-contributions)
+- [Features](#features)
+- [Dependencies](#dependencies)
+- [Installation](#installation)
+- [Project Structure](#project-structure)
+- [Development Timeline](#development-timeline)
+- [License](#license)
 
-The project follows a clean, backend-centric architecture:
+---
 
+## � Project Overview
+
+Sri Lanka's cities face severe traffic congestion from outdated signal systems unable to adapt to unique local traffic patterns, such as the mix of tuk-tuks and buses. This project introduces a prototype system that uses real-time video analysis to create an adaptive, efficient, and safe traffic management solution.
+
+### Key Objectives
+
+1. **Real-time Vehicle Detection and Classification** - Custom YOLOv8 models trained on 3,000+ Sri Lankan traffic images
+2. **Adaptive Traffic Signal Control** - Fuzzy logic-driven signal timing optimization
+3. **Traffic Violation and Risk Monitoring** - Behavioral analysis and violation detection
+4. **Integrated Dashboard and Alert System** - Real-time monitoring and Arduino-based physical alerts
+
+### Problem Statement
+
+- **Outdated Systems**: Static traffic signals unable to adapt to changing conditions
+- **Foreign Algorithms**: Failing to detect local vehicle mix (tuk-tuks, overloaded buses)
+- **No Real-time Adaptation**: Absence of dynamic response to traffic patterns
+- **Safety Concerns**: Increased accident rates due to congestion
+
+---
+
+## 🏗️ System Architecture
+```mermaid
+graph TB
+    subgraph "Data Input Layer"
+        A[Public CCTV Records]
+        B[Real-time Traffic Streams]
+        C[Open Datasets]
+    end
+    
+    subgraph "AI Processing Core"
+        D[YOLOv8 Vehicle Detection<br/>Custom-trained for SL vehicles]
+        E[Computer Vision Module<br/>Frame processing]
+        F[Machine Learning Engine<br/>Pattern analysis]
+    end
+    
+    subgraph "Intelligent Control Systems"
+        G[Fuzzy Logic Controller<br/>Adaptive signal timing]
+        H[Traffic Violation Detection<br/>Lane sorting/wrong-way]
+        I[Parking Behavior Analysis<br/>Duration & impact]
+        J[Accident Risk Prediction<br/>Real-time scoring]
+    end
+    
+    subgraph "Decision Making Layer"
+        K[Risk Assessment Engine]
+        L[Signal Timing Optimization]
+        M[Alert Generation System]
+        N[Traffic Flow Analysis]
+    end
+    
+    subgraph "Output Systems"
+        O[Arduino Traffic Lights<br/>Physical control]
+        P[LED/Buzzer Alerts<br/>Violation warnings]
+        Q[Streamlit Dashboard<br/>Monitoring interface]
+        R[Real-time Monitoring<br/>Data visualization]
+    end
+    
+    A --> E
+    B --> E
+    C --> E
+    E --> D
+    D --> F
+    F --> G
+    F --> H
+    F --> I
+    F --> J
+    
+    G --> L
+    H --> K
+    I --> N
+    J --> K
+    
+    K --> M
+    L --> O
+    M --> P
+    N --> Q
+    K --> R
+    L --> R
+    
+    style D fill:#FFD700,color:#000000,stroke:#333,stroke-width:2px
+    style G fill:#90EE90,color:#000000,stroke:#333,stroke-width:2px
+    style Q fill:#87CEEB,color:#000000,stroke:#333,stroke-width:2px
 ```
-Intelligent-Traffic-Management-System/
-├── backend/
-│   ├── app/
-│   │   ├── api/            # API Endpoints (video, parking, scoring)
-│   │   ├── core/           # Configuration & Database
-│   │   ├── services/       # AI Logic (Detection, OCR, Parking, TTS)
-│   │   ├── static/         # Web Interface (Dashboard)
-│   │   └── main.py         # Application Entry Point
-│   ├── data/               # Persistent Data
-│   │   ├── its.db          # SQLite Database
-│   │   └── videos/         # Video Recordings
-│   ├── models/             # AI Models
-│   │   ├── yolov8n.pt      # Vehicle Detection
-│   │   └── best_plate.pt   # License Plate Detection
-│   ├── scripts/            # Helper Scripts
-│   └── requirements.txt    # Dependencies
-├── .venv/                  # Virtual Environment
-└── .vscode/                # VS Code Settings
+
+### Architecture Overview
+
+1. **Data Acquisition**: Live camera feeds capture real-time traffic conditions at junctions
+2. **Vehicle Detection**: YOLOv8 models identify and classify vehicles, violations, and parking behavior
+3. **Fuzzy Logic Processing**: Controller analyzes traffic patterns and determines optimal signal timings
+4. **Signal Control & Alerts**: Adaptive signaling implemented with Arduino-based warning systems
+
+---
+
+## 👥 Team Contributions
+
+| Member | Component | Description |
+|--------|-----------|-------------|
+| **Gunarathna R.P** | Parking Behaviour & Traffic Impact Analysis | Custom YOLOv8 for parking detection, DeepSORT tracking, impact analysis |
+| **Randima K.M.G.D** | Smart Traffic Violation Detection | Behavioral violation detection, context-aware alerts |
+| **Tennakoon I.M.S.R** | Fuzzy Logic Controller | Emergency-responsive signal control, dynamic timing |
+| **Palihakkara P.I** | Accident Risk Prediction & Dashboard | Real-time risk scoring, interactive Streamlit dashboard |
+
+---
+
+## ✨ Features
+
+### Component 1: Parking Behaviour & Traffic Impact Analysis *(Gunarathna R.P)*
+
+- **Real-time Parking Detection**: Custom YOLOv8 model detects parked vehicles and roadside activity
+- **Duration Tracking**: DeepSORT algorithm estimates parking duration
+- **Illegal Parking Detection**: Identifies violations in designated no-parking zones
+- **Traffic Impact Analysis**: Calculates flow disruption from roadside parking
+- **Arduino Alerts**: LED/buzzer warnings for violations
+- **Dashboard Integration**: Real-time data feed to central monitoring
+
+**Novelty**: Two-stage prevention system with voice warnings before penalties, dynamic impact-based fining
+
+### Component 2: Smart Traffic Violation Detection *(Randima K.M.G.D)*
+
+- **Behavioral Detection**: Lane weaving, wrong-way driving, improper stopping
+- **Risk Assessment**: Context-aware severity scoring
+- **Multi-modal Alerts**: Visual, audio, and data notifications
+- **Pattern Recognition**: Repeat offender identification
+
+**Novelty**: Adaptive response system calibrated for Sri Lankan traffic patterns
+
+### Component 3: Fuzzy Logic Controller *(Tennakoon I.M.S.R)*
+
+- **Real-time Optimization**: Dynamic signal timing based on vehicle density
+- **Emergency Priority**: Instant routing for ambulances/fire trucks
+- **Multi-input Processing**: Vehicle counts, parking data, violations
+- **Arduino Simulation**: Physical traffic light control
+
+**Novelty**: Emergency-responsive fuzzy logic with adaptive learning
+
+### Component 4: Accident Risk Prediction & Dashboard *(Palihakkara P.I)*
+
+- **Predictive Risk Scoring**: Multi-factor accident likelihood calculation
+- **Interactive Dashboard**: Streamlit-based real-time monitoring
+- **Traffic Heatmaps**: Visual congestion and risk mapping
+- **Incident Logging**: Comprehensive event history and reporting
+
+**Novelty**: Forward-looking risk assessment with integrated visualization
+
+---
+
+## 📦 Dependencies
+
+### Core Libraries
+```txt
+# Computer Vision & ML
+opencv-python==4.10.0.84
+ultralytics==8.3.0              # YOLOv8
+torch==2.1.0
+torchvision==0.16.0
+
+# Tracking & Detection
+deep-sort-realtime==1.3.2
+
+# Fuzzy Logic
+scikit-fuzzy==0.4.2
+numpy==1.24.3
+
+# Dashboard & Visualization
+streamlit==1.28.0
+plotly==5.18.0
+pandas==2.1.0
+
+# Utilities
+pillow==10.4.0
+tqdm==4.66.5
 ```
 
-## 🚀 Quick Start Guide
+### Hardware Requirements
 
-### 1. Prerequisites
-*   Python 3.10 or 3.11
-*   VS Code (Recommended)
-*   Virtual Environment (venv)
+- **Camera**: 720p @ 30fps minimum (tested with CCTV footage)
+- **Arduino**: Uno/Mega for signal control and alerts
+- **LEDs/Buzzers**: For violation warnings
+- **Computer**: 
+  - CPU: Multi-core (Intel i5/M1 or better)
+  - RAM: 8GB minimum, 16GB recommended
+  - GPU: NVIDIA GPU with CUDA support (optional, for faster training)
 
-### 2. Setup (First Time)
-Open a terminal in the project root:
+---
 
+## 🚀 Installation
+
+### Prerequisites
+
+- Python 3.8 or higher
+- Git
+
+### Setup Instructions
+
+1. **Clone the repository**
 ```bash
-# Create virtual environment
-python -m venv .venv
-
-# Activate it
-# Windows (PowerShell):
-.\.venv\Scripts\Activate.ps1
-# Mac/Linux:
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r backend/requirements.txt
+git clone https://github.com/ITMS-Project/intelligent-traffic-management-system.git
+cd intelligent-traffic-management-system
 ```
 
-### 3. Running the System
-You can run the system directly from VS Code using **Run and Debug > "Run Traffic System API"**.
-
-Or via terminal:
-
+2. **Create virtual environment**
 ```bash
-cd backend
-../.venv/bin/uvicorn app.main:app --reload --port 8000
+# macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+
+# Windows
+python -m venv venv
+venv\Scripts\activate
 ```
 
-### 4. Access the Dashboard
-Once running, open your browser:
+3. **Install dependencies**
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-*   **🎥 Live Detection Feed**: [http://127.0.0.1:8000/detect](http://127.0.0.1:8000/detect)
-*   **📄 API Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+4. **Verify installation**
+```bash
+python -c "import cv2; print('OpenCV version:', cv2.__version__)"
+python -c "from ultralytics import YOLO; print('YOLOv8 imported successfully')"
+```
 
-## 🧩 How It Works
+---
 
-1.  **Ingestion**: Reads video feed (webcam or file).
-2.  **Detection**: YOLOv8 detects vehicles and defines their bounding boxes.
-3.  **Parking Logic**: Checks if a vehicle's center point stays inside a "No Parking Zone" (defined in `detection.py`) for >5 seconds.
-4.  **Plate Recognition**: If a violation is imminent, the system crops the vehicle, detects the plate, and uses EasyOCR to read the text.
-5.  **Action**:
-    *   **Audio**: Plays a TTS warning.
-    *   **Database**: Records the violation in `its.db`.
-    *   **Scoring**: Deducts points from the driver's score.
+## 📂 Project Structure
+```
+intelligent-traffic-management-system/
+├── data/
+│   ├── videos/                    # Raw CCTV footage (not tracked)
+│   ├── extracted_frames/          # Processed frames (not tracked)
+│   ├── annotations/               # YOLO format labels
+│   └── models/                    # Trained model weights
+├── src/
+│   ├── parking_analysis/
+│   │   ├── frame_extractor.py     # Video frame extraction
+│   │   ├── train_yolo.py          # YOLOv8 training script
+│   │   └── detection.py           # Real-time detection
+│   ├── violation_detection/
+│   │   └── behavioral_analysis.py
+│   ├── fuzzy_controller/
+│   │   └── signal_optimizer.py
+│   └── dashboard/
+│       └── app.py                 # Streamlit dashboard
+├── notebooks/                     # Jupyter notebooks for experiments
+├── requirements.txt               # Python dependencies
+├── README.md                      # This file
+└── LICENSE                        # MIT License
+```
 
-## 🛠️ Configuration
-Adjust settings in `backend/app/core/config.py`:
-*   `PARKING_WARNING_SECONDS`: Time before warning (default: 5s)
-*   `PARKING_VIOLATION_SECONDS`: Time before fine (default: 15s)
-*   `OCR_ENABLED`: Toggle license plate reading
+---
 
-## � Models
-*   **Vehicles**: `backend/models/yolov8n.pt` (Auto-downloaded if missing)
-*   **Plates**: `backend/models/best_plate.pt` (Custom trained)
+## 📅 Development Timeline
 
-## 📝 License
-This project is for educational and demonstration purposes.
+### Phase 1: Data Collection & Preparation ✅ (Oct 17-27, 2025)
 
-<!-- Updated on 2025-12-16 09:04:00 -->
-<!-- Updated on 2025-12-17 09:37:00 -->
-<!-- Updated on 2025-12-17 16:28:00 -->
-<!-- Updated on 2025-12-17 13:52:00 -->
-<!-- Updated on 2025-12-17 17:56:00 -->
-<!-- Updated on 2025-12-17 18:53:00 -->
-<!-- Updated on 2025-12-17 12:18:00 -->
-<!-- Updated on 2025-12-17 10:32:00 -->
-<!-- Updated on 2025-12-18 19:34:00 -->
-<!-- Updated on 2025-12-18 19:10:00 -->
-<!-- Updated on 2025-12-18 13:52:00 -->
-<!-- Updated on 2025-12-18 14:01:00 -->
-<!-- Updated on 2025-12-18 20:31:00 -->
-<!-- Updated on 2025-12-18 19:25:00 -->
-<!-- Updated on 2025-12-19 14:04:00 -->
-<!-- Updated on 2025-12-19 11:50:00 -->
-<!-- Updated on 2025-12-19 10:48:00 -->
-<!-- Updated on 2025-12-19 13:53:00 -->
-<!-- Updated on 2025-12-19 10:38:00 -->
-<!-- Updated on 2025-12-19 10:09:00 -->
-<!-- Updated on 2025-12-19 14:35:00 -->
-<!-- Updated on 2025-12-20 18:30:00 -->
-<!-- Updated on 2025-12-20 16:57:00 -->
-<!-- Updated on 2025-12-20 20:56:00 -->
-<!-- Updated on 2025-12-20 18:50:00 -->
-<!-- Updated on 2025-12-20 11:03:00 -->
-<!-- Updated on 2025-12-20 19:02:00 -->
-<!-- Updated on 2025-12-21 13:28:00 -->
-<!-- Updated on 2025-12-21 20:08:00 -->
-<!-- Updated on 2025-12-21 15:16:00 -->
-<!-- Updated on 2025-12-21 09:58:00 -->
-<!-- Updated on 2025-12-21 10:53:00 -->
-<!-- Updated on 2025-12-22 15:41:00 -->
-<!-- Updated on 2025-12-22 20:33:00 -->
-<!-- Updated on 2025-12-22 18:54:00 -->
-<!-- Updated on 2025-12-22 14:57:00 -->
-<!-- Updated on 2025-12-22 12:52:00 -->
-<!-- Updated on 2025-12-22 14:05:00 -->
-<!-- Updated on 2025-12-23 09:46:00 -->
-<!-- Updated on 2025-12-23 20:53:00 -->
-<!-- Updated on 2025-12-23 13:15:00 -->
-<!-- Updated on 2025-12-23 16:12:00 -->
-<!-- Updated on 2025-12-23 13:28:00 -->
-<!-- Updated on 2025-12-23 17:01:00 -->
-<!-- Updated on 2025-12-23 09:18:00 -->
-<!-- Updated on 2025-12-24 15:05:00 -->
-<!-- Updated on 2025-12-24 10:35:00 -->
-<!-- Updated on 2025-12-24 10:54:00 -->
-<!-- Updated on 2025-12-24 17:10:00 -->
-<!-- Updated on 2025-12-24 13:11:00 -->
-<!-- Updated on 2025-12-24 19:27:00 -->
-<!-- Updated on 2025-12-25 11:29:00 -->
-<!-- Updated on 2025-12-25 18:25:00 -->
-<!-- Updated on 2025-12-25 19:09:00 -->
-<!-- Updated on 2025-12-25 17:41:00 -->
-<!-- Updated on 2025-12-25 17:54:00 -->
-<!-- Updated on 2025-12-25 20:32:00 -->
-<!-- Updated on 2025-12-26 14:30:00 -->
-<!-- Updated on 2025-12-26 11:09:00 -->
-<!-- Updated on 2025-12-26 20:15:00 -->
-<!-- Updated on 2025-12-26 12:24:00 -->
-<!-- Updated on 2025-12-26 15:00:00 -->
-<!-- Updated on 2025-12-26 15:42:00 -->
-<!-- Updated on 2025-12-26 13:12:00 -->
-<!-- Updated on 2025-12-27 09:30:00 -->
-<!-- Updated on 2025-12-27 10:19:00 -->
-<!-- Updated on 2025-12-27 15:09:00 -->
-<!-- Updated on 2025-12-27 20:12:00 -->
-<!-- Updated on 2025-12-28 09:48:00 -->
-<!-- Updated on 2025-12-28 16:18:00 -->
-<!-- Updated on 2025-12-28 18:45:00 -->
-<!-- Updated on 2025-12-28 10:53:00 -->
-<!-- Updated on 2025-12-28 17:45:00 -->
-<!-- Updated on 2025-12-28 15:15:00 -->
-<!-- Updated on 2025-12-29 19:55:00 -->
-<!-- Updated on 2025-12-29 14:35:00 -->
-<!-- Updated on 2025-12-29 10:31:00 -->
-<!-- Updated on 2025-12-29 09:50:00 -->
-<!-- Updated on 2025-12-29 09:22:00 -->
-<!-- Updated on 2025-12-29 15:50:00 -->
-<!-- Updated on 2025-12-29 17:20:00 -->
-<!-- Updated on 2025-12-30 12:08:00 -->
-<!-- Updated on 2025-12-30 12:19:00 -->
-<!-- Updated on 2025-12-30 09:07:00 -->
-<!-- Updated on 2025-12-30 17:07:00 -->
-<!-- Updated on 2025-12-30 13:27:00 -->
-<!-- Updated on 2025-12-30 19:45:00 -->
-<!-- Updated on 2025-12-31 19:41:00 -->
-<!-- Updated on 2025-12-31 10:49:00 -->
-<!-- Updated on 2025-12-31 13:45:00 -->
-<!-- Updated on 2025-12-31 20:38:00 -->
-<!-- Updated on 2025-12-31 09:35:00 -->
-<!-- Updated on 2025-12-31 16:58:00 -->
-<!-- Updated on 2025-12-31 10:30:00 -->
-<!-- Updated on 2026-01-01 18:30:00 -->
-<!-- Updated on 2026-01-01 13:08:00 -->
-<!-- Updated on 2026-01-01 18:45:00 -->
-<!-- Updated on 2026-01-01 10:54:00 -->
-<!-- Updated on 2026-01-01 14:29:00 -->
-<!-- Updated on 2026-01-02 11:08:00 -->
-<!-- Updated on 2026-01-02 14:33:00 -->
-<!-- Updated on 2026-01-02 16:04:00 -->
-<!-- Updated on 2026-01-02 09:42:00 -->
-<!-- Updated on 2026-01-02 14:32:00 -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- update -->
-<!-- Update detection region of interest coordinates -->
-<!-- Update utility helper functions -->
-<!-- Fix race condition in thread management -->
-<!-- Update output video resolution settings -->
-<!-- Update project metadata and versioning -->
-<!-- Update unit tests for scoring engine -->
-<!-- Refactor directory structure for scalability -->
-<!-- Fix memory leak in frame buffer -->
-<!-- Update environment variable parsing -->
-<!-- Update monitoring dashboard layout -->
-<!-- Update license plate recognition regex -->
-<!-- Improve mobile responsiveness of monitor -->
-<!-- Improve text-to-speech warning clarity -->
-<!-- Cleanup temporary cache files -->
-<!-- Refactor alert generation logic -->
-<!-- Optimize variable naming for readability -->
-<!-- Add validation for vehicle plate input strings -->
-<!-- Optimize image processing pipeline speed -->
-<!-- Optimize database connection pool configuration -->
-<!-- Refactor parking duration calculation logic -->
-<!-- Reformat code according to PEP8 standards -->
-<!-- Handle edge case where vehicle stays stationary -->
-<!-- Improve exception handling in main loop -->
-<!-- Add retry mechanism for database writes -->
-<!-- Clean up logging statements in detection service -->
-<!-- Tune YOLO confidence levels for night time -->
-<!-- Enhance dashboard load time efficiency -->
-<!-- Fix minor typo in code comments -->
-<!-- Remove deprecated function calls -->
-<!-- Refactor main execution entry point -->
-<!-- Add debug logs for tracking persistence -->
-<!-- Update API documentation in README -->
-<!-- Add comments to complex algorithm sections -->
-<!-- Update detection model weights path -->
-<!-- Fix bug in API response format -->
-<!-- Update unit tests for scoring engine -->
-<!-- Update project metadata and versioning -->
-<!-- Optimize CPU usage during idle times -->
-<!-- Update output video resolution settings -->
-<!-- Update utility helper functions -->
-<!-- Improve error handling in video stream processing -->
-<!-- Fix issue with timestamp synchronization -->
-<!-- Refactor directory structure for scalability -->
-<!-- Update alert sound generated files -->
-<!-- Reformat code according to PEP8 standards -->
-<!-- Refactor parking duration calculation logic -->
-<!-- Optimize variable naming for readability -->
-<!-- Add retry mechanism for database writes -->
-<!-- Fix memory leak in frame buffer -->
-<!-- Update environment variable parsing -->
-<!-- Clean up logging statements in detection service -->
-<!-- Update frontend static asset paths -->
-<!-- Handle edge case where vehicle stays stationary -->
-<!-- Optimize image processing pipeline speed -->
-<!-- Update detection region of interest coordinates -->
-<!-- Fix minor typo in code comments -->
-<!-- Enhance dashboard load time efficiency -->
-<!-- Fix css styling issues on dashboard -->
-<!-- Adjust fuzzy logic parameters for signal control -->
-<!-- Improve text-to-speech warning clarity -->
-<!-- Improve exception handling in main loop -->
-<!-- Update dependent library versions in requirements -->
-<!-- Refactor alert generation logic -->
+- [x] Obtained 155GB CCTV footage from Sri Lanka Traffic Police
+- [x] 377 video files covering Baseline and Kanaththa junctions
+- [x] Created frame extraction pipeline
+- [x] Set up GitHub repository with proper structure
+
+### Phase 2: Dataset Creation ✅ (Oct 28 - Nov 10, 2025)
+
+- [x] Extract representative frames from videos
+- [x] Annotate 3,000+ images with parking behaviors
+- [x] Integrate external parking violation datasets
+- [x] Create synthetic training data for edge cases
+
+### Phase 3: Model Training ✅ (Nov 11 - Nov 25, 2025)
+
+- [x] Train custom YOLOv8 model for vehicle detection
+- [x] Implement DeepSORT for vehicle tracking
+- [x] Develop traffic impact analysis algorithms
+- [x] Test and validate on held-out test set
+
+### Phase 4: System Integration 🔄 (Nov 26 - Dec 10, 2025)
+
+- [ ] Integrate all four components
+- [x] Build Streamlit dashboard
+- [x] Set up Arduino hardware for physical alerts
+- [ ] End-to-end system testing
+
+### Phase 5: Evaluation & Documentation (Dec 11 - Dec 20, 2025)
+
+- [ ] Performance evaluation and metrics
+- [ ] Final report and presentation
+- [ ] Demo video creation
+- [ ] Code documentation and cleanup
+
+---
+
+## 📊 Expected Results
+
+- **Detection Accuracy**: 85%+ on Sri Lankan vehicle dataset
+- **Flow Improvement**: 70% reduction in congestion from adaptive signals
+- **Violation Reduction**: 65% decrease through real-time alerts
+- **Response Time**: <2 seconds for violation detection and alert
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📧 Contact
+
+For questions or collaboration:
+
+- **Project Lead**: Gunarathna R.P (IT22925572@my.sliit.lk)
+- **GitHub**: [ITMS-Project](https://github.com/ITMS-Project)
+- **Institution**: Sri Lanka Institute of Information Technology (SLIIT)
+
+---
+
+## 🙏 Acknowledgments
+
+- Sri Lanka Traffic Police for providing CCTV footage
+- SLIIT Computer Systems Engineering Department
+- YOLOv8 by Ultralytics
+- Open-source community for various tools and libraries
+
+---
